@@ -1,0 +1,1314 @@
+{
+  "info": {
+    "_postman_id": "nerob-ecommerce-api-collection-v1",
+    "name": "Nerob Ecommerce — Full Backend API Collection",
+    "description": "Complete Postman Collection for Nerob Multi-Vendor Ecommerce Platform containing all 16 backend modules, authentication auto-tokens, and test assertions.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 - Health & System",
+      "item": [
+        {
+          "name": "System Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API Root Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Authentication & OAuth",
+      "item": [
+        {
+          "name": "Register Buyer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "    pm.environment.set('buyer_token', jsonData.data.accessToken);",
+                  "    pm.environment.set('access_token', jsonData.data.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"buyer@example.com\",\n  \"password\": \"password123\",\n  \"phone\": \"+8801711000000\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register Seller (Shop Creation)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "    pm.environment.set('seller_token', jsonData.data.accessToken);",
+                  "}",
+                  "if (jsonData.data && jsonData.data.shop) {",
+                  "    pm.environment.set('shop_id', jsonData.data.shop._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Shop Owner\",\n  \"email\": \"seller@example.com\",\n  \"password\": \"password123\",\n  \"phone\": \"+8801722000000\",\n  \"shopName\": \"Apex Electronics\",\n  \"shopDescription\": \"Official premium gadgets and accessories\",\n  \"shopAddress\": {\n    \"city\": \"Dhaka\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register-seller",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register-seller"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User / Seller / Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.accessToken) {",
+                  "    pm.environment.set('access_token', jsonData.data.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"buyer@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Google OAuth Sign-In",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"credential\": \"GOOGLE_ID_TOKEN_JWT\",\n  \"role\": \"user\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/google",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "google"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email with OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"buyer@example.com\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/verify-email",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "verify-email"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resend Email OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"buyer@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/resend-otp",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "resend-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"buyer@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/forgot-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "forgot-password"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"newPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/reset-password/{{reset_token}}",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "reset-password", "{{reset_token}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Access Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/refresh-token",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh-token"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current Session (Me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout Session",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - VPS Media Uploads",
+      "item": [
+        {
+          "name": "Upload Single File",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "file", "type": "file", "src": "" }]
+            },
+            "url": {
+              "raw": "{{base_url}}/upload/single",
+              "host": ["{{base_url}}"],
+              "path": ["upload", "single"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Single Image",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "image", "type": "file", "src": "" }]
+            },
+            "url": {
+              "raw": "{{base_url}}/upload/image",
+              "host": ["{{base_url}}"],
+              "path": ["upload", "image"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Multiple Images",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "images", "type": "file", "src": [] }]
+            },
+            "url": {
+              "raw": "{{base_url}}/upload/images",
+              "host": ["{{base_url}}"],
+              "path": ["upload", "images"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Uploaded VPS File",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filePath\": \"uploads/images/sample.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/upload",
+              "host": ["{{base_url}}"],
+              "path": ["upload"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - User Profile & Address Book",
+      "item": [
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["users", "profile"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Updated\",\n  \"phone\": \"+8801799000000\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["users", "profile"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"password123\",\n  \"newPassword\": \"newPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["users", "change-password"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Address to Book",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Jane Doe\",\n  \"phone\": \"+8801711000000\",\n  \"street\": \"Road 12, House 45, Banani\",\n  \"city\": \"Dhaka\",\n  \"state\": \"Dhaka Division\",\n  \"zipCode\": \"1213\",\n  \"country\": \"Bangladesh\",\n  \"isDefault\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/addresses",
+              "host": ["{{base_url}}"],
+              "path": ["users", "addresses"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Wishlist",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/users/wishlist",
+              "host": ["{{base_url}}"],
+              "path": ["users", "wishlist"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Product in Wishlist",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/users/wishlist/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["users", "wishlist", "{{product_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Orders History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/users/orders",
+              "host": ["{{base_url}}"],
+              "path": ["users", "orders"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 - Multi-Vendor Shops",
+      "item": [
+        {
+          "name": "Get All Active Shops",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/shops",
+              "host": ["{{base_url}}"],
+              "path": ["shops"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Shop by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/shops/slug/{{shop_slug}}",
+              "host": ["{{base_url}}"],
+              "path": ["shops", "slug", "{{shop_slug}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Own Shop (Seller)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{seller_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/shops/seller/me",
+              "host": ["{{base_url}}"],
+              "path": ["shops", "seller", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Own Shop Profile (Seller)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{seller_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Apex Official Store\",\n  \"description\": \"Updated descriptions and business hours.\",\n  \"phone\": \"+8801700999999\",\n  \"address\": {\n    \"street\": \"Gulshan 2 Avenue\",\n    \"city\": \"Dhaka\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/shops/seller/me",
+              "host": ["{{base_url}}"],
+              "path": ["shops", "seller", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Shop Bank & Mobile Banking (Seller)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{seller_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bankName\": \"City Bank PLC\",\n  \"accountName\": \"Apex Electronics Ltd\",\n  \"accountNumber\": \"1102938491001\",\n  \"branchName\": \"Gulshan\",\n  \"bkashNumber\": \"01700000000\",\n  \"nagadNumber\": \"01800000000\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/shops/seller/me/bank",
+              "host": ["{{base_url}}"],
+              "path": ["shops", "seller", "me", "bank"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "06 - Categories Tree",
+      "item": [
+        {
+          "name": "Get Categories Tree (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": ["{{base_url}}"],
+              "path": ["categories"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Category (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Smartphones & Tablets\",\n  \"icon\": \"smartphone\",\n  \"description\": \"Flagship and budget devices\",\n  \"order\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": ["{{base_url}}"],
+              "path": ["categories"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories/slug/{{category_slug}}",
+              "host": ["{{base_url}}"],
+              "path": ["categories", "slug", "{{category_slug}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "07 - Brands Registry",
+      "item": [
+        {
+          "name": "Get All Brands (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/brands",
+              "host": ["{{base_url}}"],
+              "path": ["brands"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Brand (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Samsung\",\n  \"website\": \"https://samsung.com\",\n  \"description\": \"Global electronics leader\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/brands",
+              "host": ["{{base_url}}"],
+              "path": ["brands"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "08 - Products & Catalog",
+      "item": [
+        {
+          "name": "Get Products (Filters, Search & Pagination)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products?page=1&limit=12&search=Laptop&sort=newest",
+              "host": ["{{base_url}}"],
+              "path": ["products"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "12" },
+                { "key": "search", "value": "Laptop" },
+                { "key": "sort", "value": "newest" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Featured Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/featured?limit=8",
+              "host": ["{{base_url}}"],
+              "path": ["products", "featured"],
+              "query": [{ "key": "limit", "value": "8" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trending Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/trending?limit=8",
+              "host": ["{{base_url}}"],
+              "path": ["products", "trending"],
+              "query": [{ "key": "limit", "value": "8" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product by Slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/slug/{{product_slug}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "slug", "{{product_slug}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product with Variants (Seller)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{seller_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"MacBook Pro 16 M3 Max\",\n  \"description\": \"Supercharged for pros with M3 Max 16-core CPU and Liquid Retina XDR display.\",\n  \"category\": \"{{category_id}}\",\n  \"basePrice\": 349999,\n  \"discountPrice\": 329999,\n  \"images\": [\n    {\n      \"url\": \"http://localhost:5000/uploads/products/macbook.jpg\",\n      \"isThumbnail\": true\n    }\n  ],\n  \"variants\": [\n    {\n      \"name\": \"Space Black / 36GB / 1TB\",\n      \"sku\": \"MBP16-SB-36-1TB\",\n      \"price\": 329999,\n      \"stock\": 10\n    },\n    {\n      \"name\": \"Silver / 48GB / 2TB\",\n      \"sku\": \"MBP16-SL-48-2TB\",\n      \"price\": 389999,\n      \"stock\": 5\n    }\n  ],\n  \"isFeatured\": true,\n  \"tags\": [\"apple\", \"macbook\", \"laptop\", \"pro\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": ["{{base_url}}"],
+              "path": ["products"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Product (Seller)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{seller_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"discountPrice\": 325000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Product (Seller / Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{seller_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "09 - Multi-Vendor Orders",
+      "item": [
+        {
+          "name": "Place Multi-Vendor Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"product\": \"{{product_id}}\",\n      \"quantity\": 1,\n      \"variant\": {\n        \"name\": \"Space Black / 36GB / 1TB\",\n        \"price\": 329999\n      }\n    }\n  ],\n  \"shippingAddress\": {\n    \"fullName\": \"Jane Doe\",\n    \"phone\": \"+8801711000000\",\n    \"street\": \"Road 12, Banani\",\n    \"city\": \"Dhaka\"\n  },\n  \"paymentMethod\": \"portpos\",\n  \"couponCode\": \"{{coupon_code}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": ["{{base_url}}"],
+              "path": ["orders"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Order Details",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/orders/{{order_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["orders", "{{order_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Order (Buyer)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Ordered wrong color specification\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders/{{order_id}}/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["orders", "{{order_id}}", "cancel"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Seller Incoming Orders",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{seller_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/orders/seller/list",
+              "host": ["{{base_url}}"],
+              "path": ["orders", "seller", "list"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Order Item Status (Seller)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{seller_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"shipped\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders/seller/{{order_id}}/items/{{order_item_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["orders", "seller", "{{order_id}}", "items", "{{order_item_id}}", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Platform Orders (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/orders/admin/all",
+              "host": ["{{base_url}}"],
+              "path": ["orders", "admin", "all"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "10 - Payment Gateway (PortPos & COD)",
+      "item": [
+        {
+          "name": "Create PortPos Checkout Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"{{order_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/portpos/create",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "portpos", "create"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PortPos IPN Webhook Simulation",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invoice_id\": \"INV-ORD-SAMPLE\",\n  \"status\": \"ACCEPTED\",\n  \"transaction_id\": \"TXN-123456789\",\n  \"amount\": 329999\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/payments/portpos/ipn",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "portpos", "ipn"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm Cash on Delivery Collection",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{seller_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/payments/cod/{{order_id}}/confirm",
+              "host": ["{{base_url}}"],
+              "path": ["payments", "cod", "{{order_id}}", "confirm"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "11 - Coupons & Promotions",
+      "item": [
+        {
+          "name": "Apply Coupon to Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"EID2026\",\n  \"orderAmount\": 50000\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupons/apply",
+              "host": ["{{base_url}}"],
+              "path": ["coupons", "apply"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Platform Coupon (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"NEROB10\",\n  \"discountType\": \"percentage\",\n  \"discountValue\": 10,\n  \"minOrderAmount\": 1000,\n  \"maxDiscountAmount\": 500,\n  \"validFrom\": \"2026-01-01T00:00:00.000Z\",\n  \"validTo\": \"2026-12-31T23:59:59.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/coupons",
+              "host": ["{{base_url}}"],
+              "path": ["coupons"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "12 - Verified Product Reviews",
+      "item": [
+        {
+          "name": "Get Reviews for Product",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reviews/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", "{{product_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Post Product Review (Buyer)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Amazing performance, stunning screen, fast shipping!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/reviews/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", "{{product_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Seller Reply to Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{seller_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reply\": \"Thank you for purchasing from Apex Store! Enjoy your device.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/reviews/{{review_id}}/reply",
+              "host": ["{{base_url}}"],
+              "path": ["reviews", "{{review_id}}", "reply"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "13 - Real-Time Chat & Messaging",
+      "item": [
+        {
+          "name": "Initialize Chat with Seller",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shopId\": \"{{shop_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/chat",
+              "host": ["{{base_url}}"],
+              "path": ["chat"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Conversations List",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/chat",
+              "host": ["{{base_url}}"],
+              "path": ["chat"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Messages in Chat",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/chat/{{chat_id}}/messages",
+              "host": ["{{base_url}}"],
+              "path": ["chat", "{{chat_id}}", "messages"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{access_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Hi, do you offer official warranty on this item?\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/chat/{{chat_id}}/messages",
+              "host": ["{{base_url}}"],
+              "path": ["chat", "{{chat_id}}", "messages"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "14 - In-App Notifications",
+      "item": [
+        {
+          "name": "Get User Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/notifications",
+              "host": ["{{base_url}}"],
+              "path": ["notifications"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mark All Notifications as Read",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{access_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/notifications/read-all",
+              "host": ["{{base_url}}"],
+              "path": ["notifications", "read-all"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "15 - Seller Withdrawals & Payouts",
+      "item": [
+        {
+          "name": "Request Withdrawal (Seller)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{seller_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 5000,\n  \"paymentMethod\": \"bkash\",\n  \"accountDetails\": {\n    \"accountNumber\": \"01700000000\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/withdrawals",
+              "host": ["{{base_url}}"],
+              "path": ["withdrawals"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Seller Payout History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{seller_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/withdrawals/seller",
+              "host": ["{{base_url}}"],
+              "path": ["withdrawals", "seller"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Process Withdrawal Request (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\",\n  \"transactionReference\": \"TRX-BKASH-991823\",\n  \"adminNote\": \"Dispatched via bKash merchant payout\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/withdrawals/admin/{{withdrawal_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["withdrawals", "admin", "{{withdrawal_id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "16 - Banners & CMS",
+      "item": [
+        {
+          "name": "Get Active Homepage Banners",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/banners?position=home_hero",
+              "host": ["{{base_url}}"],
+              "path": ["banners"],
+              "query": [{ "key": "position", "value": "home_hero" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Promotional Banner (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Grand Summer Flash Sale\",\n  \"image\": {\n    \"url\": \"http://localhost:5000/uploads/banners/summer_sale.jpg\"\n  },\n  \"position\": \"home_hero\",\n  \"link\": \"/products?discount=true\",\n  \"priority\": 10\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/banners",
+              "host": ["{{base_url}}"],
+              "path": ["banners"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "17 - Admin Control Panel",
+      "item": [
+        {
+          "name": "Get Dashboard Analytics & Metrics",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "dashboard"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Platform Users List",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/users?page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "users"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Seller Applications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/sellers?status=pending",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "sellers"],
+              "query": [{ "key": "status", "value": "pending" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Approve / Reject Seller Application",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"active\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/sellers/{{shop_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "sellers", "{{shop_id}}", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Site Platform Settings",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/admin/settings",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "settings"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Platform Settings & Commission",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"siteName\": \"Nerob Multi-Vendor Commerce\",\n  \"defaultCommissionRate\": 8,\n  \"shippingChargeInsideDhaka\": 60,\n  \"shippingChargeOutsideDhaka\": 120\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/settings",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "settings"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

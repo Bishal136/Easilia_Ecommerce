@@ -1,3 +1,6 @@
+.env
+.env.production
+
 # Logs
 logs
 *.log
@@ -21,4 +24,7 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
-*.sw?
+# Uploads (VPS Storage)
+uploads/*
+!uploads/**/.gitkeep
+!uploads/.gitkeep

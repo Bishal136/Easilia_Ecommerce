@@ -1,15 +1,17 @@
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import store from "./app/store";
+import AppRoutes from "./routes/AppRoutes";
 
-
-function App() {
-
-
+export function App() {
   return (
-    <>
-      <h1 class="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-    </>
-  )
+    <Provider store={store}>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </Provider>
+  );
 }
 
-export default App
+export default App;
