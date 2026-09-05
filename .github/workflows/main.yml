@@ -11,26 +11,33 @@ jobs:
     steps:
       - name: Run Deployment on VPS
         run: |
+          set -e
           echo "🚀 Starting Deployment..."
           cd /var/www/Easilia_Ecommerce
           
-          # ১. গিট থেকে লেটেস্ট কোড পুল করা
-          git pull origin main
+          # ১. গিট রিপোজিটরি কনফিগ ও লেটেস্ট কোড সিঙ্ক করা (Divergent branch সমাধান)
+          echo "📥 Fetching and syncing latest code from GitHub..."
+          git config --global --add safe.directory /var/www/Easilia_Ecommerce || true
+          git config pull.rebase false || true
+          git fetch origin main
+          git checkout main
+          git reset --hard origin/main
           
-          # ২. Backend আপডেট ও PM2 রিস্টার্ট
+          # ২. Backend আপডেট ও PM2 রিস্টার্ট/স্টার্ট
           echo "📦 Updating Backend..."
-          cd server
-          npm install --production
-          pm2 restart easilia-backend
+          cd /var/www/Easilia_Ecommerce/server
+          npm install --omit=dev
+          pm2 reload easilia-backend || pm2 restart easilia-backend || pm2 start src/server.js --name "easilia-backend"
+          pm2 save || true
           
           # ৩. Frontend বিল্ড তৈরি
           echo "⚛️ Building Frontend..."
-          cd ../client
+          cd /var/www/Easilia_Ecommerce/client
           npm install
           npm run build
-          sudo chmod -R 755 /var/www/Easilia_Ecommerce/client
+          sudo chmod -R 755 /var/www/Easilia_Ecommerce/client/dist || chmod -R 755 dist || true
           
-          # ৪. Nginx রিলোড
+          # ৪. Nginx কনফিগ ভেরিফাই ও রিলোড
           echo "🌐 Reloading Nginx..."
           sudo nginx -t && sudo systemctl reload nginx
           

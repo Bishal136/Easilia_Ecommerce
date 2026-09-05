@@ -8,9 +8,14 @@
  * @returns {string}
  */
 export const getApiBaseUrl = () => {
-  const envUrl = import.meta.env.VITE_API_URL;
+  const envUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
   if (envUrl && typeof envUrl === "string") {
-    return envUrl.trim().replace(/\/+$/, "");
+    let clean = envUrl.trim().replace(/\/+$/, "");
+    // If the URL is only host without /api or /api/v1, append /api/v1
+    if (!clean.includes("/api")) {
+      clean = `${clean}/api/v1`;
+    }
+    return clean;
   }
   return "http://localhost:5000/api/v1";
 };
@@ -25,7 +30,7 @@ export const getServerBaseUrl = () => {
     return envServer.trim().replace(/\/+$/, "");
   }
 
-  const envApi = import.meta.env.VITE_API_URL;
+  const envApi = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
   if (envApi && typeof envApi === "string") {
     const stripped = envApi.trim().replace(/\/api(\/v1)?\/?$/, "");
     if (stripped) return stripped;
