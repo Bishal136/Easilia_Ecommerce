@@ -35,10 +35,15 @@ jobs:
           cd /var/www/Easilia_Ecommerce/client
           npm install
           npm run build
-          sudo chmod -R 755 /var/www/Easilia_Ecommerce/client/dist || chmod -R 755 dist || true
+          chmod -R 755 /var/www/Easilia_Ecommerce/client/dist || true
           
-          # ৪. Nginx কনফিগ ভেরিফাই ও রিলোড
-          echo "🌐 Reloading Nginx..."
-          sudo nginx -t && sudo systemctl reload nginx
+          # ৪. Nginx কনফিগ ভেরিফাই ও রিলোড (sudo -n দিয়ে নিরাপদ চেক)
+          echo "🌐 Checking Nginx reload..."
+          if sudo -n true 2>/dev/null; then
+            sudo nginx -t && sudo systemctl reload nginx
+            echo "✓ Nginx reloaded successfully"
+          else
+            echo "ℹ️ Sudo password not configured for runner; skipping nginx reload (Nginx serves built static files directly from disk)"
+          fi
           
           echo "✅ Deployment Finished Successfully!"
