@@ -17,6 +17,7 @@ import {
   emitStopTyping,
   emitMarkRead,
 } from "../../services/socket";
+import { getApiBaseUrl } from "../../utils/apiUrl";
 import {
   Send,
   Image as ImageIcon,
@@ -202,8 +203,7 @@ export const UserMessagesPage = () => {
 
     setUploadingImage(true);
     try {
-      const serverUrl =
-        import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
+      const serverUrl = getApiBaseUrl();
       const token =
         localStorage.getItem("easilia_token") ||
         localStorage.getItem("dealport_token");

@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { getApiBaseUrl } from "../../utils/apiUrl";
 
 export const ProductImageUpload = ({
   value,
@@ -61,9 +62,7 @@ export const ProductImageUpload = ({
         headers["Authorization"] = `Bearer ${token}`;
       }
 
-      const apiUrl = import.meta.env.VITE_API_URL
-        ? `${import.meta.env.VITE_API_URL}/upload/images`
-        : "/api/v1/upload/images";
+      const apiUrl = `${getApiBaseUrl()}/upload/images`;
 
       const formData = new FormData();
       Array.from(files).forEach((file) => {

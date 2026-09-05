@@ -12,11 +12,15 @@ import morgan from 'morgan';
 import apiRouter from './routes/index.js';
 import { generalLimiter } from './middlewares/rateLimiter.js';
 import mongoSanitizeMiddleware from './middlewares/sanitizeMiddleware.js';
+import corsOptions from './config/cors.js';
 import errorHandler from './middlewares/errorMiddleware.js';
 import ApiError from './utils/ApiError.js';
 import ApiResponse from './utils/ApiResponse.js';
 
 const app = express();
+
+// Enable trust proxy for production deployments behind reverse proxies (Nginx, Cloudflare, Render, Railway, etc.)
+app.set('trust proxy', 1);
 
 // 1. Security Headers with Cross-Origin Resource Policy for VPS Media
 app.use(
@@ -25,26 +29,8 @@ app.use(
   })
 );
 
-// 2. CORS Configuration
-const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(',').map((origin) => origin.trim())
-  : ['http://localhost:5173'];
-
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, curl, postman) or allowed origins
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error(`CORS error: Origin ${origin} not allowed`));
-      }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  })
-);
+// 2. CORS Configuration (Dynamically configured via .env CORS_ORIGIN & CLIENT_URL)
+app.use(cors(corsOptions));
 
 // 3. Request Logging
 if (process.env.NODE_ENV === 'development') {

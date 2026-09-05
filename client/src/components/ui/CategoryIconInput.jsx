@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import CategoryIcon from "./CategoryIcon";
+import { getApiBaseUrl } from "../../utils/apiUrl";
 
 export const CategoryIconInput = ({
   iconValue,
@@ -29,8 +30,13 @@ export const CategoryIconInput = ({
       const formData = new FormData();
       formData.append("image", file);
 
-      const res = await fetch("http://localhost:5000/api/v1/upload/image", {
+      const token =
+        localStorage.getItem("easilia_token") ||
+        localStorage.getItem("dealport_token");
+
+      const res = await fetch(`${getApiBaseUrl()}/upload/image`, {
         method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData,
         credentials: "include",
       });

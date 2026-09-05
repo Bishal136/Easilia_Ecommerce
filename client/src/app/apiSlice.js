@@ -1,8 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setCredentials, logout } from "../features/auth/authSlice";
+import { getApiBaseUrl } from "../utils/apiUrl";
 
-// API Base URL (defaults to server port 5000 or relative /api/v1 via proxy)
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
+// API Base URL (normalized from .env or fallback)
+const BASE_URL = getApiBaseUrl();
 
 const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,

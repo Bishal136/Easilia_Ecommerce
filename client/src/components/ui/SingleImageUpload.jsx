@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { getApiBaseUrl } from "../../utils/apiUrl";
 
 export const SingleImageUpload = ({
   label = "Upload Image",
@@ -39,9 +40,7 @@ export const SingleImageUpload = ({
         localStorage.getItem("easilia_token") ||
         localStorage.getItem("dealport_token");
 
-      const apiUrl = import.meta.env.VITE_API_URL
-        ? `${import.meta.env.VITE_API_URL}/upload/image`
-        : "/api/v1/upload/image";
+      const apiUrl = `${getApiBaseUrl()}/upload/image`;
 
       const formData = new FormData();
       formData.append("image", file);

@@ -183,11 +183,10 @@ export const useGoogleAuth = ({ onError, role = "user" } = {}) => {
       if (window.google?.accounts?.id) {
         window.google.accounts.id.prompt((notification) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            if (onError) {
+              const currentOrigin = typeof window !== "undefined" ? window.location.origin : "your domain";
               onError(
-                "Google origin authorization required: Please add 'http://localhost:5173' to 'Authorized JavaScript origins' in Google Cloud Console."
+                `Google origin authorization required: Please add '${currentOrigin}' to 'Authorized JavaScript origins' in Google Cloud Console.`
               );
-            }
           }
         });
       } else {

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Spinner from "../ui/Spinner";
 import VideoPlayer from "../ui/VideoPlayer";
 import { parseVideoUrl } from "../../utils/videoUtils";
+import { getApiBaseUrl } from "../../utils/apiUrl";
 
 
 export const ProductFormModal = ({
@@ -179,9 +180,7 @@ export const ProductFormModal = ({
         localStorage.getItem("easilia_token") ||
         localStorage.getItem("dealport_token");
 
-      const apiUrl = import.meta.env.VITE_API_URL
-        ? `${import.meta.env.VITE_API_URL}/upload/images`
-        : "/api/v1/upload/images";
+      const apiUrl = `${getApiBaseUrl()}/upload/images`;
 
       const formData = new FormData();
       Array.from(files).forEach((f) => formData.append("images", f));
@@ -286,9 +285,7 @@ export const ProductFormModal = ({
         localStorage.getItem("easilia_token") ||
         localStorage.getItem("dealport_token");
 
-      const apiUrl = import.meta.env.VITE_API_URL
-        ? `${import.meta.env.VITE_API_URL}/upload/video`
-        : "/api/v1/upload/video";
+      const apiUrl = `${getApiBaseUrl()}/upload/video`;
 
       const formData = new FormData();
       formData.append("video", files[0]);
