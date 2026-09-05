@@ -1,0 +1,37 @@
+name: Deploy Easilia Ecommerce to VPS
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Run Deployment on VPS
+        run: |
+          echo "🚀 Starting Deployment..."
+          cd /var/www/Easilia_Ecommerce
+          
+          # ১. গিট থেকে লেটেস্ট কোড পুল করা
+          git pull origin main
+          
+          # ২. Backend আপডেট ও PM2 রিস্টার্ট
+          echo "📦 Updating Backend..."
+          cd server
+          npm install --production
+          pm2 restart easilia-backend
+          
+          # ৩. Frontend বিল্ড তৈরি
+          echo "⚛️ Building Frontend..."
+          cd ../client
+          npm install
+          npm run build
+          sudo chmod -R 755 /var/www/Easilia_Ecommerce/client
+          
+          # ৪. Nginx রিলোড
+          echo "🌐 Reloading Nginx..."
+          sudo nginx -t && sudo systemctl reload nginx
+          
+          echo "✅ Deployment Finished Successfully!"
