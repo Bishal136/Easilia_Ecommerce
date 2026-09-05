@@ -3,6 +3,7 @@ name: Deploy Easilia Ecommerce to VPS
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   deploy:
