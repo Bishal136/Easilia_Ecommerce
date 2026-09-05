@@ -112,3 +112,7 @@ sudo certbot --nginx -d easilia.com -d www.easilia.com -d api.easilia.com
 ৮. স্বাস্থ্য পরীক্ষা ও ডায়াগনস্টিক কমান্ডসার্ভারের প্রতিটি উপাদান ঠিকমতো কাজ করছে কিনা তা নিচের কমান্ডগুলো দিয়ে যাচাই করুন:কম্পোনেন্টস্ট্যাটাস চেক কমান্ডরিস্টার্ট কমান্ডBackendpm2 statuspm2 restart easilia-backendDatabasesudo systemctl status mongodsudo systemctl restart mongodWeb Serversudo systemctl status nginxsudo systemctl restart nginxTunnelsudo systemctl status cloudflaredsudo systemctl restart cloudflaredলোকাল টেস্ট:Bashcurl -I -H "Host: easilia.com" http://127.0.0.1
 curl -I -H "Host: api.easilia.com" http://127.0.0.1
 উভয় ক্ষেত্রে HTTP/1.1 200 OK রিটার্ন করলে আপনার পুরো MERN স্ট্যাক ইন্টারনেটে লাইভ।
+
+
+
+
