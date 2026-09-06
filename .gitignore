@@ -5,3 +5,6 @@ Fig
 vps.md
 MondoDB.md
 .env.backup
+server/.env
+client/.env
+.env
