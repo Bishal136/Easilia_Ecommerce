@@ -4,7 +4,4 @@ rules.md
 Fig
 vps.md
 MondoDB.md
-.env.env
 .env.backup
-client/.env
-server/.env
