@@ -8,3 +8,4 @@ MondoDB.md
 server/.env
 client/.env
 .env
+.agents
