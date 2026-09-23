@@ -15,7 +15,7 @@ export const SellerProductsPage = () => {
   const { data: shopRes } = useGetOwnShopQuery();
   const shop = shopRes?.data?.shop || shopRes?.shop;
 
-  const { data: categoriesRes } = useGetCategoriesQuery();
+  const { data: categoriesRes } = useGetCategoriesQuery({ flat: true });
   const categories = categoriesRes?.data?.categories || categoriesRes?.categories || [];
 
   const [search, setSearch] = useState("");
@@ -286,8 +286,8 @@ export const SellerProductsPage = () => {
                     <td className="px-4 py-3.5 text-slate-600 dark:text-slate-300">
                       {prod.category?.name || "General"}
                     </td>
-                    <td className="px-4 py-3.5 font-bold text-slate-900 dark:text-slate-100">
-                      ${Number(prod.basePrice || prod.price || 0).toFixed(2)}
+                    <td className="px-4 py-3.5 font-bold text-slate-900 dark:text-slate-100 font-mono">
+                      ৳{Number(prod.basePrice || prod.price || 0).toLocaleString("en-BD")}
                     </td>
                     <td className="px-4 py-3.5">
                       <span

@@ -21,9 +21,9 @@ export const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       const { product, quantity = 1, variant = null } = action.payload;
-      const productId = product._id || product.id;
+      const productId = product?._id || product?.id;
       const existing = state.items.find(
-        (it) => (it.product._id || it.product.id) === productId
+        (it) => (it.product?._id || it.product?.id || it.productId) === productId
       );
 
       if (existing) {
@@ -44,12 +44,12 @@ export const cartSlice = createSlice({
     updateQuantity: (state, action) => {
       const { productId, quantity } = action.payload;
       const item = state.items.find(
-        (it) => (it.product._id || it.product.id) === productId
+        (it) => (it.product?._id || it.product?.id || it.productId) === productId
       );
       if (item) {
         if (quantity <= 0) {
           state.items = state.items.filter(
-            (it) => (it.product._id || it.product.id) !== productId
+            (it) => (it.product?._id || it.product?.id || it.productId) !== productId
           );
         } else {
           item.quantity = quantity;
@@ -62,7 +62,7 @@ export const cartSlice = createSlice({
     removeFromCart: (state, action) => {
       const productId = action.payload;
       state.items = state.items.filter(
-        (it) => (it.product._id || it.product.id) !== productId
+        (it) => (it.product?._id || it.product?.id || it.productId) !== productId
       );
       if (typeof window !== "undefined") {
         localStorage.setItem("dealport_cart", JSON.stringify(state.items));

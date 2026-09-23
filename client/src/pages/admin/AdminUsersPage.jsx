@@ -160,10 +160,10 @@ export const AdminUsersPage = () => {
       )}
 
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
               User Management
             </h1>
             <span className="px-2 py-0.5 rounded-md text-xs font-semibold bg-purple-100 text-purple-700 border border-purple-200">
@@ -174,10 +174,10 @@ export const AdminUsersPage = () => {
             View, search, filter verification status, block, and manage registered platform accounts.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             onClick={() => refetch()}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold shadow-xs transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
           >
             <svg
               className={`w-3.5 h-3.5 ${isFetching ? "animate-spin text-purple-600" : ""}`}
@@ -189,7 +189,7 @@ export const AdminUsersPage = () => {
             </svg>
             <span>Refresh</span>
           </button>
-          <span className="px-3.5 py-1.5 rounded-lg bg-slate-100 text-slate-700 font-semibold text-xs border border-slate-200">
+          <span className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 font-semibold text-xs border border-slate-200">
             Total Users: <span className="text-purple-600 font-bold">{totalCount}</span>
           </span>
         </div>
@@ -198,10 +198,10 @@ export const AdminUsersPage = () => {
       {/* Filter and Search Bar Card */}
       <form
         onSubmit={handleSearchSubmit}
-        className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col md:flex-row items-center gap-3"
+        className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-2.5"
       >
         {/* Search Input */}
-        <div className="relative flex-1 w-full">
+        <div className="relative sm:col-span-2 lg:col-span-4">
           <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
             🔍
           </span>
@@ -209,7 +209,7 @@ export const AdminUsersPage = () => {
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search users by name, email, or phone..."
+            placeholder="Search users by name, email, phone..."
             className="w-full pl-9 pr-8 py-2 text-xs text-slate-800 placeholder-slate-400 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           />
           {searchInput && (
@@ -234,7 +234,7 @@ export const AdminUsersPage = () => {
             setSelectedRole(e.target.value);
             setPage(1);
           }}
-          className="w-full md:w-auto px-3 py-2 text-xs text-slate-700 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium"
+          className="lg:col-span-2 w-full px-3 py-2 text-xs text-slate-700 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium"
         >
           <option value="all">All Roles</option>
           <option value="user">User / Buyer</option>
@@ -249,7 +249,7 @@ export const AdminUsersPage = () => {
             setSelectedVerification(e.target.value);
             setPage(1);
           }}
-          className="w-full md:w-auto px-3 py-2 text-xs text-slate-700 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium"
+          className="lg:col-span-2 w-full px-3 py-2 text-xs text-slate-700 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium"
         >
           <option value="all">All Verification</option>
           <option value="verified">Verified</option>
@@ -263,7 +263,7 @@ export const AdminUsersPage = () => {
             setSelectedStatus(e.target.value);
             setPage(1);
           }}
-          className="w-full md:w-auto px-3 py-2 text-xs text-slate-700 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium"
+          className="lg:col-span-2 w-full px-3 py-2 text-xs text-slate-700 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium"
         >
           <option value="all">All Account Statuses</option>
           <option value="active">Active</option>
@@ -273,7 +273,7 @@ export const AdminUsersPage = () => {
         {/* Search Submit Button */}
         <button
           type="submit"
-          className="w-full md:w-auto px-6 py-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold rounded-lg shadow-xs transition-all shrink-0"
+          className="sm:col-span-2 lg:col-span-2 w-full py-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold rounded-lg shadow-xs transition-all cursor-pointer"
         >
           Search
         </button>
@@ -313,16 +313,16 @@ export const AdminUsersPage = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left text-slate-600">
+            <table className="w-full min-w-[700px] text-xs text-left text-slate-600">
               <thead className="text-[11px] font-semibold text-slate-500 bg-slate-50/80 border-b border-slate-200">
                 <tr>
-                  <th className="px-6 py-3.5">User</th>
-                  <th className="px-6 py-3.5">Contact</th>
-                  <th className="px-6 py-3.5">Role</th>
-                  <th className="px-6 py-3.5">Email Status</th>
-                  <th className="px-6 py-3.5">Account Status</th>
-                  <th className="px-6 py-3.5">Joined Date</th>
-                  <th className="px-6 py-3.5 text-right">Actions</th>
+                  <th className="px-4 sm:px-6 py-3.5">User</th>
+                  <th className="px-4 sm:px-6 py-3.5">Contact</th>
+                  <th className="px-4 sm:px-6 py-3.5">Role</th>
+                  <th className="px-4 sm:px-6 py-3.5">Email Status</th>
+                  <th className="px-4 sm:px-6 py-3.5">Account Status</th>
+                  <th className="px-4 sm:px-6 py-3.5">Joined Date</th>
+                  <th className="px-4 sm:px-6 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -342,7 +342,7 @@ export const AdminUsersPage = () => {
                   return (
                     <tr key={u._id} className="hover:bg-slate-50/70 transition-colors">
                       {/* User Avatar + Name + ID */}
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs shrink-0">
                             {initial}
@@ -359,93 +359,95 @@ export const AdminUsersPage = () => {
                       </td>
 
                       {/* Contact Info */}
-                      <td className="px-6 py-4">
-                        <div className="text-xs text-slate-800 font-medium">
-                          {u.email}
-                        </div>
-                        <div className="text-[11px] text-slate-400 mt-0.5">
-                          {u.phone || "No phone"}
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="font-medium text-slate-800">{u.email}</div>
+                        <div className="text-[11px] text-slate-400">
+                          {u.phone || "No phone linked"}
                         </div>
                       </td>
 
                       {/* Role Badge */}
-                      <td className="px-6 py-4">
-                        {getRoleBadge(u.role)}
-                      </td>
+                      <td className="px-4 sm:px-6 py-4">{getRoleBadge(u.role)}</td>
 
-                      {/* Email Status */}
-                      <td className="px-6 py-4">
+                      {/* Email Verification */}
+                      <td className="px-4 sm:px-6 py-4">
                         {isVerified ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            <span>✓</span>
-                            <span>Verified</span>
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700">
+                            ✓ Verified
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                            <span>⊘</span>
-                            <span>Unverified</span>
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700">
+                            ⊘ Unverified
                           </span>
                         )}
                       </td>
 
-                      {/* Account Status */}
-                      <td className="px-6 py-4">
+                      {/* Account Block Status */}
+                      <td className="px-4 sm:px-6 py-4">
                         {isBanned ? (
-                          <span className="inline-block px-2.5 py-0.5 rounded text-[11px] font-semibold bg-rose-50 text-rose-600">
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-700">
                             Blocked
                           </span>
                         ) : (
-                          <span className="inline-block px-2.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-600">
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800">
                             Active
                           </span>
                         )}
                       </td>
 
                       {/* Joined Date */}
-                      <td className="px-6 py-4 text-slate-500 font-mono text-xs">
+                      <td className="px-4 sm:px-6 py-4 text-slate-500 font-mono text-[11px]">
                         {dateStr}
                       </td>
 
                       {/* Action Buttons */}
-                      <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
-                        <button
-                          type="button"
-                          onClick={() => handleOpenView(u)}
-                          className="px-3 py-1 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-md text-xs font-medium transition-colors"
-                        >
-                          View
-                        </button>
-
-                        {isBanned ? (
+                      <td className="px-4 sm:px-6 py-4 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-1.5 sm:gap-2">
+                          {/* View User Modal */}
                           <button
-                            type="button"
-                            disabled={isTogglingBan}
-                            onClick={() => handleToggleBan(u)}
-                            className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-semibold shadow-xs transition-colors"
+                            onClick={() => handleOpenView(u)}
+                            className="p-1.5 text-slate-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors cursor-pointer"
+                            title="View user details & roles"
                           >
-                            Unblock
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
                           </button>
-                        ) : (
-                          <button
-                            type="button"
-                            disabled={isTogglingBan}
-                            onClick={() => handleToggleBan(u)}
-                            className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md text-xs font-semibold shadow-xs transition-colors"
-                          >
-                            Block
-                          </button>
-                        )}
 
-                        <button
-                          type="button"
-                          onClick={() => setUserToDelete(u)}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 rounded hover:bg-rose-50 transition-colors inline-flex items-center justify-center align-middle"
-                          title="Delete User"
-                        >
-                          <svg className="w-4 h-4 text-red-500 hover:text-red-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
+                          {/* Quick Ban / Unban Toggle */}
+                          <button
+                            onClick={() => handleToggleBan(u)}
+                            disabled={isTogglingBan}
+                            className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                              isBanned
+                                ? "text-emerald-600 hover:bg-emerald-50"
+                                : "text-amber-500 hover:bg-amber-50"
+                            }`}
+                            title={isBanned ? "Unblock account" : "Suspend / Block account"}
+                          >
+                            {isBanned ? (
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                            ) : (
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                              </svg>
+                            )}
+                          </button>
+
+                          {/* Delete User Button */}
+                          <button
+                            onClick={() => setUserToDelete(u)}
+                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                            title="Delete user record"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -457,7 +459,7 @@ export const AdminUsersPage = () => {
 
         {/* Pagination Footer */}
         {totalPages > 1 && (
-          <div className="p-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+          <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
             <div>
               Showing page <span className="font-semibold text-slate-700">{page}</span> of{" "}
               <span className="font-semibold text-slate-700">{totalPages}</span>
@@ -466,14 +468,14 @@ export const AdminUsersPage = () => {
               <button
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="px-3 py-1 rounded border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
                 Previous
               </button>
               <button
                 disabled={page >= totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className="px-3 py-1 rounded border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
                 Next
               </button>
@@ -484,41 +486,41 @@ export const AdminUsersPage = () => {
 
       {/* User Details & Role Elevation Modal */}
       {selectedUser && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-lg w-full border border-slate-200 shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-lg w-full border border-slate-200 shadow-2xl overflow-hidden my-auto max-h-[92dvh] flex flex-col animate-in fade-in zoom-in-95 duration-150">
             {/* Header */}
-            <div className="p-6 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-sm shadow-xs">
+            <div className="p-4 sm:p-6 border-b border-slate-200 flex items-center justify-between bg-slate-50/50 shrink-0">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-sm shadow-xs shrink-0">
                   {selectedUser.name ? selectedUser.name[0].toUpperCase() : "U"}
                 </div>
-                <div>
-                  <h3 className="text-base font-bold text-slate-900">{selectedUser.name}</h3>
+                <div className="min-w-0">
+                  <h3 className="text-base font-bold text-slate-900 truncate">{selectedUser.name}</h3>
                   <p className="text-xs text-slate-500">Platform User Account Details</p>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedUser(null)}
-                className="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors cursor-pointer shrink-0 ml-2"
               >
                 ✕
               </button>
             </div>
 
             {/* Body */}
-            <div className="p-6 space-y-4 text-xs text-slate-700">
-              <div className="grid grid-cols-2 gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100">
+            <div className="p-4 sm:p-6 space-y-4 text-xs text-slate-700 overflow-y-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 sm:p-4 rounded-xl bg-slate-50 border border-slate-100">
                 <div>
                   <span className="text-[10px] font-bold uppercase text-slate-400">Full Name</span>
-                  <div className="font-bold text-slate-900 mt-0.5">{selectedUser.name}</div>
+                  <div className="font-bold text-slate-900 mt-0.5 break-words">{selectedUser.name}</div>
                 </div>
                 <div>
                   <span className="text-[10px] font-bold uppercase text-slate-400">User ID</span>
-                  <div className="font-mono text-slate-800 mt-0.5">{selectedUser._id}</div>
+                  <div className="font-mono text-slate-800 mt-0.5 break-all text-[11px]">{selectedUser._id}</div>
                 </div>
                 <div>
                   <span className="text-[10px] font-bold uppercase text-slate-400">Email Address</span>
-                  <div className="font-medium text-slate-900 mt-0.5">{selectedUser.email}</div>
+                  <div className="font-medium text-slate-900 mt-0.5 break-all">{selectedUser.email}</div>
                 </div>
                 <div>
                   <span className="text-[10px] font-bold uppercase text-slate-400">Phone Number</span>
@@ -551,7 +553,7 @@ export const AdminUsersPage = () => {
                 <span className="text-[11px] font-bold uppercase text-purple-800 tracking-wider block">
                   RBAC Role Elevation
                 </span>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
                   <select
                     value={newRole}
                     onChange={(e) => setNewRole(e.target.value)}
@@ -565,7 +567,7 @@ export const AdminUsersPage = () => {
                     type="button"
                     disabled={isUpdatingRole || newRole === selectedUser.role}
                     onClick={handleSaveRole}
-                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-lg text-xs font-bold shadow-xs transition-all"
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-lg text-xs font-bold shadow-xs transition-all cursor-pointer text-center"
                   >
                     Save Role
                   </button>
@@ -574,11 +576,11 @@ export const AdminUsersPage = () => {
             </div>
 
             {/* Footer */}
-            <div className="p-6 border-t border-slate-200 bg-slate-50/50 flex items-center justify-between">
+            <div className="p-4 sm:p-6 border-t border-slate-200 bg-slate-50/50 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5 shrink-0">
               <button
                 type="button"
                 onClick={() => handleToggleBan(selectedUser)}
-                className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
+                className={`w-full sm:w-auto px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center ${
                   selectedUser.isBanned
                     ? "bg-emerald-600 hover:bg-emerald-700 text-white"
                     : "bg-rose-600 hover:bg-rose-700 text-white"
@@ -590,7 +592,7 @@ export const AdminUsersPage = () => {
               <button
                 type="button"
                 onClick={() => setSelectedUser(null)}
-                className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-medium transition-colors"
+                className="w-full sm:w-auto px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-medium transition-colors cursor-pointer text-center"
               >
                 Close
               </button>
@@ -612,11 +614,11 @@ export const AdminUsersPage = () => {
                 Are you sure you want to delete <strong className="text-slate-800">{userToDelete.name}</strong> ({userToDelete.email})? This action cannot be undone.
               </p>
             </div>
-            <div className="flex gap-3 justify-end pt-2">
+            <div className="flex flex-col-reverse sm:flex-row gap-2 justify-end pt-2">
               <button
                 type="button"
                 onClick={() => setUserToDelete(null)}
-                className="px-4 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium"
+                className="w-full sm:w-auto px-4 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium cursor-pointer text-center"
               >
                 Cancel
               </button>
@@ -624,7 +626,7 @@ export const AdminUsersPage = () => {
                 type="button"
                 disabled={isDeletingUser}
                 onClick={handleConfirmDelete}
-                className="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition-colors"
+                className="w-full sm:w-auto px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer text-center"
               >
                 Confirm Delete
               </button>

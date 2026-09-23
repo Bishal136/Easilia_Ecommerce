@@ -70,20 +70,20 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden bg-gradient-to-r from-[#D0C2F7] via-[#D5B8EE] to-[#E3C7F8] p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen w-full flex items-center justify-center relative overflow-x-hidden bg-gradient-to-r from-[#D0C2F7] via-[#D5B8EE] to-[#E3C7F8] p-3 sm:p-6 lg:p-8 py-6 sm:py-10">
       {/* Background Decorative Ambient Geometrics */}
       <div className="absolute -top-20 -right-20 w-80 h-80 sm:w-96 sm:h-96 rounded-full bg-[#BFA8EE]/60 pointer-events-none" />
       <div className="absolute -bottom-24 -right-24 w-80 h-80 sm:w-96 sm:h-96 rounded-full border-[36px] sm:border-[44px] border-[#F2A8CD]/70 pointer-events-none" />
 
       {/* Main Glassmorphic Split Container */}
-      <div className="relative z-10 w-full max-w-[940px] bg-white/20 backdrop-blur-2xl border border-white/50 shadow-2xl shadow-purple-950/15 rounded-[32px] overflow-hidden grid grid-cols-1 md:grid-cols-2">
+      <div className="relative z-10 w-full max-w-[940px] bg-white/20 backdrop-blur-2xl border border-white/50 shadow-2xl shadow-purple-950/15 rounded-[32px] overflow-hidden grid grid-cols-1 md:grid-cols-2 my-2 sm:my-6">
         {/* Left Side: 3D Frosted Glass Visual Banner */}
         <div className="hidden md:block bg-white/10 backdrop-blur-md border-r border-white/30 relative">
           <AuthIllustration />
         </div>
 
         {/* Right Side: Clean White Form Canvas */}
-        <div className="bg-white p-8 sm:p-10 md:p-12 flex flex-col justify-center">
+        <div className="bg-white p-5 sm:p-8 md:p-12 flex flex-col justify-center max-h-none md:max-h-[90vh] overflow-y-auto">
           <h1 className="text-2xl sm:text-[28px] font-serif font-bold text-[#111827] mb-6 tracking-tight">
             Hello ! Welcome Back
           </h1>

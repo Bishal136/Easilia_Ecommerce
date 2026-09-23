@@ -69,19 +69,19 @@ export const AdminDashboard = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
             Platform Admin Dashboard
           </h1>
           <p className="text-xs text-slate-500 mt-1">
             System overview, platform revenue, seller verification queue, and order fulfillment oversight.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             onClick={() => refetch()}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold shadow-xs transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
           >
             <svg
               className={`w-3.5 h-3.5 ${isFetching ? "animate-spin text-purple-600" : ""}`}
@@ -95,17 +95,42 @@ export const AdminDashboard = () => {
           </button>
           <Link
             to="/admin/sellers"
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold shadow-xs transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold shadow-xs transition-colors cursor-pointer"
           >
             <span>Verify Sellers ({metrics.pendingSellers || 0})</span>
           </Link>
         </div>
       </div>
 
-      {/* Top 4 Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      {/* Pending Seller KYC Alert Banner */}
+      {metrics.pendingSellers > 0 && (
+        <div className="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-300/80 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-lg font-bold shrink-0 shadow-xs">
+              ⚠️
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-slate-900">
+                {metrics.pendingSellers} Seller Application{metrics.pendingSellers > 1 ? "s" : ""} Pending Review
+              </h3>
+              <p className="text-xs text-slate-600 mt-0.5">
+                New merchant stores are waiting for KYC and tax document verification before they can start listing products.
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/admin/sellers"
+            className="self-start sm:self-auto px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors shrink-0"
+          >
+            Review KYC Applications →
+          </Link>
+        </div>
+      )}
+
+      {/* Top Stat Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {/* Card 1: Total Platform GMV */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between hover:border-emerald-200 transition-colors">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
               Total Platform GMV
@@ -119,13 +144,13 @@ export const AdminDashboard = () => {
               ৳{Number(metrics.totalGrossSales || 0).toLocaleString()}
             </div>
             <div className="text-xs text-slate-400 mt-1">
-              Total value of all processed orders
+              Total value of all customer orders
             </div>
           </div>
         </div>
 
         {/* Card 2: Total Orders */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between hover:border-amber-200 transition-colors">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
               Total Orders
@@ -145,7 +170,7 @@ export const AdminDashboard = () => {
         </div>
 
         {/* Card 3: Registered Sellers */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between hover:border-sky-200 transition-colors">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
               Registered Sellers
@@ -159,16 +184,16 @@ export const AdminDashboard = () => {
               {Number(metrics.totalSellers || 0).toLocaleString()}
             </div>
             <div className="text-xs text-slate-400 mt-1">
-              All active shops
+              {metrics.pendingSellers > 0 ? `${metrics.pendingSellers} pending verification` : "All shops approved & active"}
             </div>
           </div>
         </div>
 
         {/* Card 4: Total Users */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between hover:border-purple-200 transition-colors">
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-              Total Users
+              Total Platform Users
             </span>
             <div className="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-sm shadow-xs">
               👥
@@ -179,15 +204,15 @@ export const AdminDashboard = () => {
               {Number(metrics.totalUsers || 0).toLocaleString()}
             </div>
             <div className="text-xs text-slate-400 mt-1">
-              Buyers, sellers & administrators
+              Buyers, merchants & admins
             </div>
           </div>
         </div>
       </div>
 
-      {/* 3 Quick Navigation Shortcut Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {/* User Management */}
+      {/* 6 Quick Navigation Shortcut Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        {/* 1. User Management */}
         <Link
           to="/admin/users"
           className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-purple-300 hover:shadow-sm transition-all flex items-center gap-4 group"
@@ -195,17 +220,35 @@ export const AdminDashboard = () => {
           <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
             👥
           </div>
-          <div>
-            <div className="font-bold text-slate-900 text-sm group-hover:text-purple-600 transition-colors">
+          <div className="min-w-0">
+            <div className="font-bold text-slate-900 text-sm group-hover:text-purple-600 transition-colors truncate">
               User Management
             </div>
-            <div className="text-xs text-slate-500 mt-0.5">
-              Manage buyer accounts, roles & block status
+            <div className="text-xs text-slate-500 mt-0.5 truncate">
+              Manage accounts, roles & ban status
             </div>
           </div>
         </Link>
 
-        {/* Categories & Hierarchy */}
+        {/* 2. Seller & KYC */}
+        <Link
+          to="/admin/sellers"
+          className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-sky-300 hover:shadow-sm transition-all flex items-center gap-4 group"
+        >
+          <div className="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
+            🏪
+          </div>
+          <div className="min-w-0">
+            <div className="font-bold text-slate-900 text-sm group-hover:text-sky-600 transition-colors truncate">
+              Seller & KYC Review
+            </div>
+            <div className="text-xs text-slate-500 mt-0.5 truncate">
+              Approve merchant trade licenses & tax IDs
+            </div>
+          </div>
+        </Link>
+
+        {/* 3. Categories & Hierarchy */}
         <Link
           to="/admin/categories"
           className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-amber-300 hover:shadow-sm transition-all flex items-center gap-4 group"
@@ -213,17 +256,53 @@ export const AdminDashboard = () => {
           <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
             📁
           </div>
-          <div>
-            <div className="font-bold text-slate-900 text-sm group-hover:text-amber-600 transition-colors">
+          <div className="min-w-0">
+            <div className="font-bold text-slate-900 text-sm group-hover:text-amber-600 transition-colors truncate">
               Categories & Hierarchy
             </div>
-            <div className="text-xs text-slate-500 mt-0.5">
-              Add subcategories, sort orders & SEO metadata
+            <div className="text-xs text-slate-500 mt-0.5 truncate">
+              Add subcategories, sort orders & icons
             </div>
           </div>
         </Link>
 
-        {/* Platform Settings */}
+        {/* 4. Orders Oversight */}
+        <Link
+          to="/admin/orders"
+          className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-indigo-300 hover:shadow-sm transition-all flex items-center gap-4 group"
+        >
+          <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
+            📦
+          </div>
+          <div className="min-w-0">
+            <div className="font-bold text-slate-900 text-sm group-hover:text-indigo-600 transition-colors truncate">
+              Orders Oversight
+            </div>
+            <div className="text-xs text-slate-500 mt-0.5 truncate">
+              Track fulfillment & payment overrides
+            </div>
+          </div>
+        </Link>
+
+        {/* 5. Banners & CMS */}
+        <Link
+          to="/admin/banners"
+          className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-rose-300 hover:shadow-sm transition-all flex items-center gap-4 group"
+        >
+          <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
+            🖼️
+          </div>
+          <div className="min-w-0">
+            <div className="font-bold text-slate-900 text-sm group-hover:text-rose-600 transition-colors truncate">
+              Banners & CMS
+            </div>
+            <div className="text-xs text-slate-500 mt-0.5 truncate">
+              Hero carousel slides & announcement ticker
+            </div>
+          </div>
+        </Link>
+
+        {/* 6. Platform Settings */}
         <Link
           to="/admin/settings"
           className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs hover:border-emerald-300 hover:shadow-sm transition-all flex items-center gap-4 group"
@@ -231,12 +310,12 @@ export const AdminDashboard = () => {
           <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
             ⚙️
           </div>
-          <div>
-            <div className="font-bold text-slate-900 text-sm group-hover:text-emerald-600 transition-colors">
+          <div className="min-w-0">
+            <div className="font-bold text-slate-900 text-sm group-hover:text-emerald-600 transition-colors truncate">
               Platform Settings
             </div>
-            <div className="text-xs text-slate-500 mt-0.5">
-              Commission rates, delivery fees & coupon codes
+            <div className="text-xs text-slate-500 mt-0.5 truncate">
+              Commission rates, delivery fees & coupons
             </div>
           </div>
         </Link>
@@ -244,7 +323,7 @@ export const AdminDashboard = () => {
 
       {/* Recent Platform Orders Card */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+        <div className="p-4 sm:p-6 border-b border-slate-100 flex items-center justify-between gap-3">
           <div>
             <h2 className="font-bold text-slate-900 text-sm">Recent Platform Orders</h2>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -253,7 +332,7 @@ export const AdminDashboard = () => {
           </div>
           <Link
             to="/admin/orders"
-            className="text-xs font-semibold text-slate-600 hover:text-purple-600 border border-slate-200 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-white transition-all"
+            className="text-xs font-semibold text-slate-600 hover:text-purple-600 border border-slate-200 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-white transition-all shrink-0"
           >
             View All →
           </Link>
@@ -265,15 +344,15 @@ export const AdminDashboard = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left text-slate-600">
+            <table className="w-full min-w-[580px] text-xs text-left text-slate-600">
               <thead className="text-[11px] font-semibold text-slate-500 bg-slate-50/80 border-b border-slate-100">
                 <tr>
-                  <th className="px-6 py-3.5">Order ID</th>
-                  <th className="px-6 py-3.5">Customer</th>
-                  <th className="px-6 py-3.5">Items</th>
-                  <th className="px-6 py-3.5">Total Amount</th>
-                  <th className="px-6 py-3.5">Status</th>
-                  <th className="px-6 py-3.5">Date</th>
+                  <th className="px-4 sm:px-6 py-3.5">Order ID</th>
+                  <th className="px-4 sm:px-6 py-3.5">Customer</th>
+                  <th className="px-4 sm:px-6 py-3.5">Items</th>
+                  <th className="px-4 sm:px-6 py-3.5">Total Amount</th>
+                  <th className="px-4 sm:px-6 py-3.5">Status</th>
+                  <th className="px-4 sm:px-6 py-3.5">Date</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

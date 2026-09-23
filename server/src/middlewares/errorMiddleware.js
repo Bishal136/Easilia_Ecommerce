@@ -56,9 +56,10 @@ export const errorHandler = (err, req, res, next) => {
   // Handle Multer Upload Errors
   if (err.name === 'MulterError') {
     if (err.code === 'LIMIT_FILE_SIZE') {
-      error = new ApiError(400, 'File size too large. Please upload a smaller file.');
+      const maxMb = process.env.MAX_VIDEO_SIZE_MB || 250;
+      error = new ApiError(400, `File size too large. Maximum allowed size is ${maxMb}MB.`);
     } else if (err.code === 'LIMIT_UNEXPECTED_FILE') {
-      error = new ApiError(400, `Unexpected form field "${err.field}". Please use "image", "file", or "images".`);
+      error = new ApiError(400, `Unexpected form field "${err.field}". Please use "video", "image", or "file".`);
     } else {
       error = new ApiError(400, `Upload error: ${err.message}`);
     }

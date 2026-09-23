@@ -4,7 +4,6 @@ import VideoPlayer from "../ui/VideoPlayer";
 import { parseVideoUrl } from "../../utils/videoUtils";
 import { getApiBaseUrl } from "../../utils/apiUrl";
 
-
 export const ProductFormModal = ({
   isOpen,
   onClose,
@@ -21,6 +20,7 @@ export const ProductFormModal = ({
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [isActive, setIsActive] = useState(true);
+
 
   // Tab 2: Pricing & Stock
   const [basePrice, setBasePrice] = useState("");
@@ -39,6 +39,8 @@ export const ProductFormModal = ({
   const [videoInputMode, setVideoInputMode] = useState("upload"); // "upload" | "url"
   const [videoUrlInput, setVideoUrlInput] = useState("");
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+  const [videoError, setVideoError] = useState("");
+  const [videoSuccess, setVideoSuccess] = useState("");
   const videoFileInputRef = useRef(null);
 
   // Tab 4: Variants
@@ -167,6 +169,8 @@ export const ProductFormModal = ({
     }
     setActiveTab("basic");
     setErrorMsg("");
+    setVideoError("");
+    setVideoSuccess("");
   }, [initialData, categories, isOpen]);
 
   // Image Upload Handlers
@@ -277,8 +281,36 @@ export const ProductFormModal = ({
   // Video Upload Handlers
   const handleUploadVideo = async (files) => {
     if (!files || files.length === 0) return;
-    setIsUploadingVideo(true);
+    const file = files[0];
+    setVideoError("");
+    setVideoSuccess("");
     setErrorMsg("");
+
+    const maxVideoSizeMB = Number(import.meta.env.VITE_MAX_VIDEO_SIZE_MB) || 250;
+
+    // 1. Client-side size validation
+    if (file.size > maxVideoSizeMB * 1024 * 1024) {
+      const msg = `Video size (${(file.size / (1024 * 1024)).toFixed(1)}MB) exceeds the ${maxVideoSizeMB}MB limit. Please choose a smaller video or attach a video link.`;
+      setVideoError(msg);
+      setErrorMsg(msg);
+      if (videoFileInputRef.current) videoFileInputRef.current.value = "";
+      return;
+    }
+
+    // 2. Client-side type validation
+    const isVideo =
+      !file.type ||
+      file.type.startsWith("video/") ||
+      /\.(mp4|webm|mov|mkv|avi|m4v|3gp|wmv|flv|mpg|mpeg|ts|ogv)$/i.test(file.name);
+    if (!isVideo) {
+      const msg = "Please select a valid video file (MP4, WebM, MOV, MKV, AVI, etc.).";
+      setVideoError(msg);
+      setErrorMsg(msg);
+      if (videoFileInputRef.current) videoFileInputRef.current.value = "";
+      return;
+    }
+
+    setIsUploadingVideo(true);
 
     try {
       const token =
@@ -288,7 +320,7 @@ export const ProductFormModal = ({
       const apiUrl = `${getApiBaseUrl()}/upload/video`;
 
       const formData = new FormData();
-      formData.append("video", files[0]);
+      formData.append("video", file);
 
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -298,25 +330,27 @@ export const ProductFormModal = ({
       });
 
       const data = await res.json();
-      if (res.ok && data?.data?.file?.url) {
-        const uploadedUrl = data.data.file.url;
-        setVideos([{ url: uploadedUrl, path: data.data.file.path || "" }]);
+      const uploadedFile = data?.data?.file || data?.file;
+
+      if (res.ok && uploadedFile?.url) {
+        const uploadedUrl = uploadedFile.url;
+        setVideos([{ url: uploadedUrl, path: uploadedFile.path || "" }]);
         setVideoUrlInput(uploadedUrl);
+        setVideoError("");
+        setVideoSuccess("Video uploaded successfully!");
       } else {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setVideos([{ url: e.target.result, path: "" }]);
-          setVideoUrlInput(e.target.result);
-        };
-        reader.readAsDataURL(files[0]);
+        const errorText =
+          data?.message ||
+          "Failed to upload video to server. Please verify the format or use a video link.";
+        setVideoError(errorText);
+        setErrorMsg(errorText);
       }
-    } catch {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setVideos([{ url: e.target.result, path: "" }]);
-        setVideoUrlInput(e.target.result);
-      };
-      reader.readAsDataURL(files[0]);
+    } catch (err) {
+      const errorText =
+        err?.message ||
+        "Network error while uploading video to server. Please ensure backend server is running.";
+      setVideoError(errorText);
+      setErrorMsg(errorText);
     } finally {
       setIsUploadingVideo(false);
       if (videoFileInputRef.current) videoFileInputRef.current.value = "";
@@ -467,7 +501,14 @@ export const ProductFormModal = ({
     // Compile videos: prioritize direct input if typed or attached
     let finalVideos = [...videos];
     if (videoUrlInput && videoUrlInput.trim()) {
-      finalVideos = [{ url: videoUrlInput.trim(), path: "", isThumbnail: false }];
+      const existing = videos.find((v) => v.url === videoUrlInput.trim());
+      finalVideos = [
+        {
+          url: videoUrlInput.trim(),
+          path: existing?.path || "",
+          isThumbnail: false,
+        },
+      ];
     }
 
     // Compile variants array from option groups
@@ -527,10 +568,10 @@ export const ProductFormModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
-      <div className="bg-white dark:bg-[#131B2E] w-full max-w-4xl rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden max-h-[92vh] flex flex-col font-sans">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/60 backdrop-blur-xs">
+      <div className="bg-white dark:bg-[#131B2E] w-full max-w-4xl rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden max-h-[92dvh] sm:max-h-[90vh] flex flex-col font-sans animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Header */}
-        <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-[#0F172A]">
+        <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-[#0F172A]">
           <div className="max-w-[85%]">
             <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 truncate">
               {initialData ? `Edit Product: ${initialData.title}` : "Add New Product"}
@@ -542,14 +583,14 @@ export const ProductFormModal = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+            className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors cursor-pointer"
           >
             ✕
           </button>
         </div>
 
         {/* Tab Switcher Navigation Bar */}
-        <div className="flex border-b border-slate-200 dark:border-slate-800 px-6 pt-3 gap-2 bg-slate-50/50 dark:bg-slate-900/30 overflow-x-auto">
+        <div className="flex border-b border-slate-200 dark:border-slate-800 px-3 sm:px-6 pt-2.5 sm:pt-3 gap-1.5 sm:gap-2 bg-slate-50/50 dark:bg-slate-900/30 overflow-x-auto scrollbar-none">
           {[
             { id: "basic", label: "Basic Info", icon: "📝" },
             { id: "pricing", label: "Pricing & Stock", icon: "💰" },
@@ -560,20 +601,20 @@ export const ProductFormModal = ({
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold transition-all shrink-0 whitespace-nowrap cursor-pointer ${
                 activeTab === tab.id
                   ? "bg-indigo-600 text-white shadow-xs"
                   : "text-slate-600 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-800"
               }`}
             >
               <span>{tab.icon}</span>
-              <span className="whitespace-nowrap">{tab.label}</span>
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>
 
         {/* Modal Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto flex-1 space-y-5">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 sm:space-y-5">
           {errorMsg && (
             <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-300 text-xs">
               {errorMsg}
@@ -595,27 +636,53 @@ export const ProductFormModal = ({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Wireless Bluetooth Noise-Cancelling Headphones"
-                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-white dark:bg-slate-900 border border-indigo-500/70 focus:border-indigo-600 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
                 />
               </div>
 
+              {/* Category Dropdown Selection Only */}
               <div>
                 <label className="block text-xs font-semibold text-slate-800 dark:text-slate-200 mb-1.5">
                   Category *
                 </label>
-                <select
-                  required
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option value="">Select Category</option>
-                  {categories.map((c) => (
-                    <option key={c._id} value={c._id}>
-                      {c.name}
+                <div className="relative">
+                  <select
+                    required
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full px-4 py-2.5 text-xs rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs appearance-none cursor-pointer pr-10 font-medium"
+                  >
+                    <option value="" disabled>
+                      Select category...
                     </option>
-                  ))}
-                </select>
+                    {categories.map((c) => {
+                      const parentName =
+                        typeof c.parent === "object" && c.parent?.name
+                          ? c.parent.name
+                          : null;
+                      return (
+                        <option key={c._id} value={c._id}>
+                          {parentName ? `${parentName} → ${c.name}` : c.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -648,6 +715,7 @@ export const ProductFormModal = ({
               </div>
             </div>
           )}
+
 
           {/* ========================================================================= */}
           {/* TAB 2: PRICING & STOCK                                                    */}
@@ -816,14 +884,14 @@ export const ProductFormModal = ({
                       >
                         <img src={img.url} alt={`Upload ${idx}`} className="w-full h-full object-cover" />
                         {img.isThumbnail ? (
-                          <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-indigo-600 text-white">
+                          <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-indigo-600 text-white shadow-xs">
                             ★ Main
                           </span>
                         ) : (
                           <button
                             type="button"
                             onClick={() => handleSetMainThumbnail(idx)}
-                            className="absolute top-1 left-1 opacity-0 group-hover:opacity-100 transition-opacity px-1.5 py-0.5 rounded text-[8px] font-bold bg-slate-900/80 text-white cursor-pointer"
+                            className="absolute top-1 left-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity px-1.5 py-0.5 rounded text-[8px] font-bold bg-slate-900/80 hover:bg-indigo-600 text-white cursor-pointer shadow-xs"
                           >
                             Set Main
                           </button>
@@ -831,7 +899,7 @@ export const ProductFormModal = ({
                         <button
                           type="button"
                           onClick={() => handleRemoveImage(idx)}
-                          className="absolute top-1 right-1 w-5 h-5 rounded-full bg-slate-900/80 hover:bg-rose-600 text-white text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
+                          className="absolute top-1 right-1 w-5 h-5 rounded-full bg-slate-900/80 hover:bg-rose-600 text-white text-[10px] flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all cursor-pointer shadow-xs"
                         >
                           ✕
                         </button>
@@ -858,7 +926,10 @@ export const ProductFormModal = ({
                   <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
                     <button
                       type="button"
-                      onClick={() => setVideoInputMode("upload")}
+                      onClick={() => {
+                        setVideoInputMode("upload");
+                        setVideoError("");
+                      }}
                       className={`px-3 py-1 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer ${
                         videoInputMode === "upload"
                           ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-2xs"
@@ -869,7 +940,10 @@ export const ProductFormModal = ({
                     </button>
                     <button
                       type="button"
-                      onClick={() => setVideoInputMode("url")}
+                      onClick={() => {
+                        setVideoInputMode("url");
+                        setVideoError("");
+                      }}
                       className={`px-3 py-1 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer ${
                         videoInputMode === "url"
                           ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-2xs"
@@ -898,6 +972,7 @@ export const ProductFormModal = ({
                         onChange={(e) => {
                           const val = e.target.value;
                           setVideoUrlInput(val);
+                          setVideoError("");
                           if (val.trim()) {
                             setVideos([{ url: val.trim(), path: "", isThumbnail: false }]);
                           }
@@ -922,18 +997,64 @@ export const ProductFormModal = ({
                   </div>
                 ) : (
                   <div
-                    onClick={() => videoFileInputRef.current?.click()}
-                    className="border-2 border-dashed border-purple-400/60 dark:border-purple-500/40 rounded-2xl p-6 text-center cursor-pointer bg-purple-50/20 dark:bg-purple-950/10 hover:bg-purple-50/40 transition-colors"
+                    onClick={() => {
+                      if (videoFileInputRef.current) {
+                        videoFileInputRef.current.value = "";
+                      }
+                      videoFileInputRef.current?.click();
+                    }}
+                    className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-colors ${
+                      isUploadingVideo
+                        ? "border-purple-400 bg-purple-50/20 dark:bg-purple-950/20 pointer-events-none opacity-80"
+                        : "border-purple-400/60 dark:border-purple-500/40 bg-purple-50/20 dark:bg-purple-950/10 hover:bg-purple-50/40"
+                    }`}
                   >
                     <div className="flex flex-col items-center justify-center gap-1.5">
-                      <span className="text-2xl">📹</span>
+                      <span className="text-2xl">{isUploadingVideo ? "⏳" : "📹"}</span>
                       <p className="text-xs font-bold text-purple-600 dark:text-purple-400">
-                        {isUploadingVideo ? "Uploading Video..." : "Click to select and upload video"}
+                        {isUploadingVideo ? "Uploading Video to Server..." : "Click to select and upload video"}
                       </p>
                       <p className="text-[11px] text-slate-400">
-                        Supports MP4, WebM, MOV up to 100MB.
+                        {isUploadingVideo
+                          ? "Please wait while your video file is being uploaded..."
+                          : "Supports MP4, WebM, MOV, MKV, AVI, etc. up to 250MB."}
                       </p>
                     </div>
+                  </div>
+                )}
+
+                {/* In-Place Video Error Banner */}
+                {videoError && (
+                  <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs flex items-start gap-2.5">
+                    <span className="text-base shrink-0 mt-0.5">⚠️</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold">Video Upload Issue</p>
+                      <p className="text-[11px] opacity-90 mt-0.5 break-words">{videoError}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setVideoError("")}
+                      className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs px-1.5 py-0.5 rounded cursor-pointer shrink-0"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
+
+                {/* In-Place Video Success Banner */}
+                {videoSuccess && (
+                  <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs flex items-center justify-between">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-sm shrink-0">✅</span>
+                      <p className="font-semibold truncate">{videoSuccess}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setVideoSuccess("")}
+                      className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs px-1.5 py-0.5 rounded cursor-pointer shrink-0"
+                    >
+                      ✕
+                    </button>
                   </div>
                 )}
 
@@ -962,6 +1083,8 @@ export const ProductFormModal = ({
                         onClick={() => {
                           setVideos([]);
                           setVideoUrlInput("");
+                          setVideoError("");
+                          setVideoSuccess("");
                         }}
                         className="text-xs text-rose-500 font-bold hover:underline shrink-0 ml-3 cursor-pointer"
                       >
@@ -1131,7 +1254,7 @@ export const ProductFormModal = ({
                         <button
                           type="button"
                           onClick={() => handleAddValueToGroup(group.id, group.inputValue)}
-                          className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-indigo-500/70 hover:bg-indigo-50 dark:hover:bg-slate-700 text-indigo-600 dark:text-indigo-400 font-semibold text-xs transition-colors cursor-pointer"
+                          className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-indigo-500/70 hover:bg-indigo-50 dark:hover:bg-slate-700 text-indigo-600 dark:text-indigo-400 font-semibold text-xs transition-colors cursor-pointer shrink-0"
                         >
                           Add Value
                         </button>
@@ -1140,7 +1263,7 @@ export const ProductFormModal = ({
                       {/* Option Values Table (Option | Specific Price | Stock | SKU | ✕) */}
                       {group.values.length > 0 ? (
                         <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
-                          <table className="w-full text-xs text-left">
+                          <table className="w-full min-w-[480px] text-xs text-left">
                             <thead className="text-[11px] font-bold text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800">
                               <tr>
                                 <th className="px-4 py-2.5">Option</th>
@@ -1217,31 +1340,63 @@ export const ProductFormModal = ({
             </div>
           )}
 
-          {/* Modal Footer Controls */}
-          <div className="pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3 sticky bottom-0 bg-white dark:bg-[#131B2E]">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs disabled:opacity-50 cursor-pointer"
-            >
-              {isLoading ? (
-                <span className="flex items-center gap-1.5">
-                  <Spinner size="xs" />
-                  Saving...
-                </span>
-              ) : initialData ? (
-                "Save Changes"
-              ) : (
-                "Create Product"
+          {/* Modal Footer Controls with Step Navigation */}
+          <div className="p-3.5 sm:p-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 sticky bottom-0 bg-white dark:bg-[#131B2E] z-10">
+            <div className="flex items-center gap-2 order-2 sm:order-1">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              {activeTab !== "basic" && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (activeTab === "variants") setActiveTab("media");
+                    else if (activeTab === "media") setActiveTab("pricing");
+                    else if (activeTab === "pricing") setActiveTab("basic");
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs transition-colors cursor-pointer"
+                >
+                  ← Back
+                </button>
               )}
-            </button>
+            </div>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end order-1 sm:order-2">
+              {activeTab !== "variants" && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (activeTab === "basic") setActiveTab("pricing");
+                    else if (activeTab === "pricing") setActiveTab("media");
+                    else if (activeTab === "media") setActiveTab("variants");
+                  }}
+                  className="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors cursor-pointer"
+                >
+                  Next Step →
+                </button>
+              )}
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="px-6 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs disabled:opacity-50 transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                {isLoading ? (
+                  <span className="flex items-center gap-1.5">
+                    <Spinner size="xs" />
+                    Saving...
+                  </span>
+                ) : initialData ? (
+                  "Save Changes"
+                ) : (
+                  "Create Product"
+                )}
+              </button>
+            </div>
           </div>
         </form>
       </div>
@@ -1250,3 +1405,4 @@ export const ProductFormModal = ({
 };
 
 export default ProductFormModal;
+

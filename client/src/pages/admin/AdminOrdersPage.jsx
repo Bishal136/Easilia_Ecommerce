@@ -242,10 +242,10 @@ export const AdminOrdersPage = () => {
       )}
 
       {/* Header Section */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
               Platform Orders & Oversight
             </h1>
             <span className="px-2 py-0.5 bg-indigo-50 text-[#4F46E5] text-[10px] font-bold rounded-full border border-indigo-100">
@@ -257,11 +257,11 @@ export const AdminOrdersPage = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
           <button
             type="button"
             onClick={() => refetch()}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-xs transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-xs transition-colors cursor-pointer"
           >
             <span className={isFetching ? "animate-spin" : ""}>🔄</span>
             <span>Refresh</span>
@@ -274,9 +274,9 @@ export const AdminOrdersPage = () => {
       </div>
 
       {/* Search and Comprehensive Filters Card */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
         {/* Search Bar Row */}
-        <form onSubmit={handleSearchSubmit} className="flex gap-2">
+        <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-2">
           <div className="relative flex-1">
             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
               🔍
@@ -295,7 +295,7 @@ export const AdminOrdersPage = () => {
                   setSearchInput("");
                   setAppliedSearch("");
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs cursor-pointer"
               >
                 ✕
               </button>
@@ -303,7 +303,7 @@ export const AdminOrdersPage = () => {
           </div>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold rounded-lg shadow-sm transition-all shrink-0"
+            className="w-full sm:w-auto px-6 py-2.5 bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold rounded-lg shadow-sm transition-all cursor-pointer text-center"
           >
             Search
           </button>
@@ -430,18 +430,18 @@ export const AdminOrdersPage = () => {
       ) : (
         <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left text-slate-600">
+            <table className="w-full min-w-[820px] text-xs text-left text-slate-600">
               <thead className="text-[11px] font-semibold text-slate-500 bg-slate-50/80 border-b border-slate-200">
                 <tr>
-                  <th className="px-5 py-3.5">Order ID</th>
-                  <th className="px-5 py-3.5">Buyer Details</th>
-                  <th className="px-5 py-3.5">Seller / Shop</th>
-                  <th className="px-5 py-3.5">Items</th>
-                  <th className="px-5 py-3.5">Total GMV</th>
-                  <th className="px-5 py-3.5">Payment</th>
-                  <th className="px-5 py-3.5">Lifecycle Status</th>
-                  <th className="px-5 py-3.5">Placed Date</th>
-                  <th className="px-5 py-3.5 text-right">Actions</th>
+                  <th className="px-4 sm:px-5 py-3.5">Order ID</th>
+                  <th className="px-4 sm:px-5 py-3.5">Buyer Details</th>
+                  <th className="px-4 sm:px-5 py-3.5">Seller / Shop</th>
+                  <th className="px-4 sm:px-5 py-3.5">Items</th>
+                  <th className="px-4 sm:px-5 py-3.5">Total GMV</th>
+                  <th className="px-4 sm:px-5 py-3.5">Payment</th>
+                  <th className="px-4 sm:px-5 py-3.5">Lifecycle Status</th>
+                  <th className="px-4 sm:px-5 py-3.5">Placed Date</th>
+                  <th className="px-4 sm:px-5 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -547,13 +547,13 @@ export const AdminOrdersPage = () => {
 
       {/* Order Details Inspection Modal */}
       {selectedOrderDetails && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-2xl w-full border border-slate-200 shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-2xl w-full border border-slate-200 shadow-2xl overflow-hidden my-auto max-h-[92dvh] flex flex-col animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
-            <div className="p-6 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold text-slate-900">
+            <div className="p-4 sm:p-6 border-b border-slate-200 flex items-center justify-between bg-slate-50/50 shrink-0">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-base font-bold text-slate-900 truncate">
                     Order #{selectedOrderDetails.orderNumber}
                   </h3>
                   {renderLifecycleBadge(selectedOrderDetails.orderStatus)}
@@ -564,14 +564,14 @@ export const AdminOrdersPage = () => {
               </div>
               <button
                 onClick={() => setSelectedOrderDetails(null)}
-                className="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors cursor-pointer shrink-0 ml-2"
               >
                 ✕
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 space-y-5 text-xs text-slate-700 max-h-[70vh] overflow-y-auto">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-5 text-xs text-slate-700 overflow-y-auto">
               {/* Buyer & Shipping Address Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200/80">
                 <div>
@@ -664,7 +664,7 @@ export const AdminOrdersPage = () => {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-5 border-t border-slate-200 bg-slate-50/50 flex items-center justify-between">
+            <div className="p-4 sm:p-6 border-t border-slate-200 bg-slate-50/50 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5 shrink-0">
               <button
                 type="button"
                 onClick={() => {
@@ -672,14 +672,14 @@ export const AdminOrdersPage = () => {
                   setSelectedOrderDetails(null);
                   handleOpenStatusModal(ord);
                 }}
-                className="px-4 py-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white rounded-lg text-xs font-bold shadow-sm transition-all"
+                className="w-full sm:w-auto px-4 py-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white rounded-lg text-xs font-bold shadow-sm transition-all cursor-pointer text-center"
               >
                 Override Status
               </button>
               <button
                 type="button"
                 onClick={() => setSelectedOrderDetails(null)}
-                className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-medium transition-colors"
+                className="w-full sm:w-auto px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-medium transition-colors cursor-pointer text-center"
               >
                 Close
               </button>
@@ -690,11 +690,11 @@ export const AdminOrdersPage = () => {
 
       {/* Override Lifecycle & Payment Status Modal */}
       {statusModalOrder && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full border border-slate-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="p-6 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
-              <div>
-                <h3 className="text-base font-bold text-slate-900">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-md w-full border border-slate-200 shadow-2xl overflow-hidden my-auto max-h-[92dvh] flex flex-col animate-in fade-in zoom-in-95 duration-150">
+            <div className="p-4 sm:p-6 border-b border-slate-200 flex items-center justify-between bg-slate-50/50 shrink-0">
+              <div className="min-w-0">
+                <h3 className="text-base font-bold text-slate-900 truncate">
                   Override Order Status
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -703,14 +703,14 @@ export const AdminOrdersPage = () => {
               </div>
               <button
                 onClick={() => setStatusModalOrder(null)}
-                className="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors cursor-pointer shrink-0 ml-2"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleSaveStatus}>
-              <div className="p-6 space-y-4 text-xs text-slate-700">
+            <form onSubmit={handleSaveStatus} className="flex flex-col flex-1 overflow-hidden">
+              <div className="p-4 sm:p-6 space-y-4 text-xs text-slate-700 overflow-y-auto flex-1">
                 {/* Lifecycle Status Select */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-800 mb-1">
@@ -763,18 +763,18 @@ export const AdminOrdersPage = () => {
                 </div>
               </div>
 
-              <div className="p-6 border-t border-slate-200 bg-slate-50/50 flex items-center justify-end gap-3">
+              <div className="p-4 sm:p-6 border-t border-slate-200 bg-slate-50/50 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setStatusModalOrder(null)}
-                  className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-medium transition-colors"
+                  className="w-full sm:w-auto px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-medium transition-colors cursor-pointer text-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isUpdatingStatus}
-                  className="px-5 py-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white rounded-lg text-xs font-bold shadow-sm transition-all"
+                  className="w-full sm:w-auto px-5 py-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white rounded-lg text-xs font-bold shadow-sm transition-all cursor-pointer text-center"
                 >
                   {isUpdatingStatus ? "Saving..." : "Save Status"}
                 </button>

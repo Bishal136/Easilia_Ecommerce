@@ -23,6 +23,7 @@ import { useGetProductsQuery } from "../../features/products/productApi";
 import { useGetCategoriesQuery } from "../../features/categories/categoryApi";
 import { useGetWishlistQuery, useToggleWishlistMutation } from "../../features/user/userApi";
 import { addToCart } from "../../features/cart/cartSlice";
+import CategoryIcon from "../../components/ui/CategoryIcon";
 
 export const ProductListPage = () => {
   const dispatch = useDispatch();
@@ -243,9 +244,60 @@ export const ProductListPage = () => {
       </div>
 
       {/* ========================================================================= */}
+      {/* Mobile / Tablet Horizontal Category Scroll Strip (lg:hidden)              */}
+      {/* ========================================================================= */}
+      <div className="lg:hidden space-y-2">
+        <div className="flex items-center justify-between text-xs font-bold text-slate-500">
+          <span className="uppercase tracking-wider">Categories</span>
+          {selectedCategory !== "all" && (
+            <button
+              type="button"
+              onClick={() => handleCategoryClick("all")}
+              className="text-emerald-700 dark:text-emerald-400 hover:underline cursor-pointer text-[11px] font-bold"
+            >
+              Clear Filter
+            </button>
+          )}
+        </div>
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
+          <button
+            type="button"
+            onClick={() => handleCategoryClick("all")}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+              selectedCategory === "all"
+                ? "bg-[#166534] text-white shadow-xs font-bold ring-2 ring-[#166534]/30"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
+            }`}
+          >
+            All Products ({products.length})
+          </button>
+          {categories.map((cat) => {
+            const catValue = cat.slug || cat._id || cat.name;
+            const isSelected = selectedCategory === catValue || selectedCategory === cat.slug;
+            return (
+              <button
+                key={cat._id || cat.name}
+                type="button"
+                onClick={() => handleCategoryClick(catValue)}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition-all cursor-pointer flex items-center gap-1.5 ${
+                  isSelected
+                    ? "bg-[#166534] text-white shadow-xs font-bold ring-2 ring-[#166534]/30"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
+                }`}
+              >
+                <CategoryIcon icon={cat.icon} image={cat.image} className="w-3.5 h-3.5" />
+                <span>{cat.name}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
       {/* 2-Column Catalog Layout: Left Sidebar + Right Grid                        */}
       {/* ========================================================================= */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
         {/* ======================================================================= */}
         {/* LEFT SIDEBAR: Filters                                                   */}
         {/* ======================================================================= */}

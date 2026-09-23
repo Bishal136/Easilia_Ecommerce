@@ -398,26 +398,7 @@ export const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Quick Stats Box (ADDRESSES & PINCODE) */}
-          <div className="flex items-center justify-center self-center md:self-end bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl px-6 py-3 shadow-xs">
-            <div className="text-center px-4">
-              <p className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">
-                ADDRESSES
-              </p>
-              <p className="text-xl font-black text-slate-900 dark:text-white mt-0.5">
-                {addresses.length}
-              </p>
-            </div>
-            <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 mx-2" />
-            <div className="text-center px-4">
-              <p className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">
-                PINCODE
-              </p>
-              <p className="text-xl font-black text-indigo-600 dark:text-indigo-400 mt-0.5">
-                {activePincode}
-              </p>
-            </div>
-          </div>
+        
         </div>
       </div>
 

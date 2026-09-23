@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet, NavLink, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useLogoutMutation } from "../../features/auth/authApi";
@@ -7,12 +7,13 @@ export const AdminLayout = () => {
   const { user } = useAuth();
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
       await logout().unwrap();
       navigate("/login");
-    } catch (err) {
+    } catch {
       navigate("/login");
     }
   };
@@ -87,66 +88,109 @@ export const AdminLayout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC] font-sans antialiased text-slate-800">
       {/* Top Navigation Bar */}
-      <header className="h-16 bg-white border-b border-slate-200/80 px-6 sm:px-8 flex items-center justify-between sticky top-0 z-30 shadow-xs">
-        {/* Brand Logo & Admin Badge */}
+      <header className="h-16 bg-white border-b border-slate-200/80 px-4 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-30 shadow-xs">
+        {/* Left: Mobile Toggle + Brand Logo & Admin Badge */}
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(true)}
+            className="p-2 -ml-1.5 rounded-xl text-slate-600 hover:bg-slate-100 lg:hidden cursor-pointer"
+            aria-label="Open navigation menu"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
           <Link to="/admin/dashboard" className="flex items-center gap-1.5 group">
-            <span className="text-2xl font-black tracking-tight text-slate-950 group-hover:text-purple-600 transition-colors">
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-slate-950 group-hover:text-purple-600 transition-colors">
               Easilia
             </span>
           </Link>
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
             <span className="w-1.5 h-1.5 rounded-full bg-purple-600 animate-pulse"></span>
-            ADMIN PANEL
+            <span className="hidden xs:inline">ADMIN</span> PANEL
           </span>
         </div>
 
         {/* Right Menu: Storefront link, Admin User Profile & Logout */}
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-2 sm:gap-4">
           <Link
             to="/"
-            className="flex items-center gap-1.5 text-xs text-slate-600 hover:text-purple-600 font-medium transition-colors"
+            className="flex items-center gap-1.5 text-xs text-slate-600 hover:text-purple-600 font-medium transition-colors p-1.5 sm:p-0 rounded-lg hover:bg-slate-50 sm:hover:bg-transparent"
+            title="View Storefront"
           >
             <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
-            <span>View Storefront</span>
+            <span className="hidden md:inline">Storefront</span>
           </Link>
 
-          <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
-            <div className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-              {user?.name ? user.name[0].toUpperCase() : "S"}
+          <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4 border-l border-slate-200">
+            <div className="w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
+              {user?.name ? user.name[0].toUpperCase() : "A"}
             </div>
             <div className="hidden sm:block text-left">
-              <div className="text-xs font-bold text-slate-800 leading-tight">
-                {user?.name || "System Administrator"}
+              <div className="text-xs font-bold text-slate-800 leading-tight truncate max-w-[120px]">
+                {user?.name || "Administrator"}
               </div>
-              <div className="text-[10px] text-slate-400 font-medium">Admin</div>
+              <div className="text-[10px] text-slate-400 font-medium">Platform Admin</div>
             </div>
             <button
               onClick={handleLogout}
-              className="text-xs text-slate-600 hover:text-rose-600 font-medium ml-2 transition-colors"
+              className="text-xs text-slate-600 hover:text-rose-600 font-medium ml-1 sm:ml-2 transition-colors cursor-pointer p-1 rounded-lg hover:bg-slate-50"
               title="Sign Out"
             >
-              Log Out
+              <span className="hidden sm:inline">Log Out</span>
+              <svg className="w-4 h-4 sm:hidden text-slate-500 hover:text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
             </button>
           </div>
         </div>
       </header>
 
-      {/* Body: Sidebar + Main Outlet */}
-      <div className="flex flex-1 min-w-0">
-        {/* Sidebar */}
-        <aside className="w-60 bg-white border-r border-slate-200/80 p-4 shrink-0 flex flex-col min-h-[calc(100vh-64px)]">
+      {/* Body Container */}
+      <div className="flex flex-1 min-w-0 relative">
+        {/* Mobile Backdrop */}
+        {mobileMenuOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-xs lg:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+
+        {/* Sidebar: Persistent on Desktop, Drawer on Mobile */}
+        <aside
+          className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200/80 p-4 shrink-0 flex flex-col min-h-screen lg:min-h-[calc(100vh-64px)] transform transition-transform duration-200 ease-in-out ${
+            mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          }`}
+        >
+          {/* Mobile Drawer Top Bar */}
+          <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-100 lg:hidden">
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-black text-purple-700">Easilia</span>
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-purple-50 text-purple-700">Admin</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+
           <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider px-3 mb-2">
             Navigation Menu
           </div>
 
-          <nav className="flex-1 space-y-1">
+          <nav className="flex-1 space-y-1 overflow-y-auto">
             {adminNav.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
+                onClick={() => setMobileMenuOpen(false)}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
                     isActive
@@ -160,10 +204,15 @@ export const AdminLayout = () => {
               </NavLink>
             ))}
           </nav>
+
+          {/* Sidebar Footer */}
+          <div className="pt-3 border-t border-slate-100 mt-auto text-[11px] text-slate-400 px-3">
+            Easilia v2.0 • Admin Suite
+          </div>
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 p-6 sm:p-8 overflow-y-auto min-w-0">
+        <main className="flex-1 p-3 sm:p-6 lg:p-8 overflow-y-auto min-w-0">
           <Outlet />
         </main>
       </div>

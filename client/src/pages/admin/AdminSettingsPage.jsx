@@ -207,24 +207,26 @@ export const AdminSettingsPage = () => {
       )}
 
       {/* Header Section */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-          Platform Settings & Commission
-        </h1>
-        <p className="text-xs text-slate-500 mt-1">
-          Configure global fee rules, delivery parameters, and manage platform discount coupons.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+            Platform Settings & Commission
+          </h1>
+          <p className="text-xs text-slate-500 mt-1">
+            Configure global fee rules, delivery parameters, and manage platform discount coupons.
+          </p>
+        </div>
       </div>
 
       <form onSubmit={handleSaveSettings} className="space-y-6">
         {/* Card 1: Global Financial & Delivery Parameters */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-5">
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-5">
           <div className="flex items-center gap-2 text-sm font-bold text-slate-900">
             <span>💳</span>
             <span>Global Financial & Delivery Parameters</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 items-start">
             {/* Default Delivery Charge */}
             <div>
               <label className="block text-xs font-semibold text-slate-800 mb-0.5">
@@ -273,8 +275,8 @@ export const AdminSettingsPage = () => {
           </div>
 
           {/* Dynamic Payout Preview Callout Box */}
-          <div className="p-3.5 bg-blue-50/60 border border-blue-100 rounded-xl flex items-center gap-2.5 text-xs text-blue-900">
-            <span>💡</span>
+          <div className="p-3.5 bg-blue-50/60 border border-blue-100 rounded-xl flex items-start sm:items-center gap-2.5 text-xs text-blue-900">
+            <span className="shrink-0 mt-0.5 sm:mt-0">💡</span>
             <span>
               <strong>Payout Preview:</strong> On an order of ৳{orderBase.toLocaleString()}, Platform retains <strong>৳{platformRetains} ({rateNum}%)</strong>, and the seller receives <strong>৳{sellerReceives.toLocaleString()}</strong>.
             </span>
@@ -282,8 +284,8 @@ export const AdminSettingsPage = () => {
         </div>
 
         {/* Card 2: Platform Coupon Codes */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4 sm:p-6 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2 text-sm font-bold text-slate-900">
                 <span>🎟️</span>
@@ -296,7 +298,7 @@ export const AdminSettingsPage = () => {
             <button
               type="button"
               onClick={handleOpenCreateModal}
-              className="px-3.5 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="w-full sm:w-auto px-3.5 py-1.5 rounded-lg bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-semibold shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <span>+</span>
               <span>Add Coupon</span>
@@ -329,12 +331,12 @@ export const AdminSettingsPage = () => {
                     key={coupon._id}
                     className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/60 transition-colors"
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="px-2.5 py-1 bg-purple-50 text-purple-700 border border-purple-200 rounded-md font-mono font-bold text-xs tracking-wider">
+                    <div className="flex items-start sm:items-center gap-3 min-w-0">
+                      <span className="px-2.5 py-1 bg-purple-50 text-purple-700 border border-purple-200 rounded-md font-mono font-bold text-xs tracking-wider shrink-0">
                         {coupon.code}
                       </span>
-                      <div>
-                        <div className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-slate-900 flex flex-wrap items-center gap-1.5 sm:gap-2">
                           <span>{discountText}</span>
                           {coupon.minOrderAmount > 0 && (
                             <span className="text-[10px] text-slate-400 font-normal">
@@ -347,13 +349,13 @@ export const AdminSettingsPage = () => {
                             </span>
                           )}
                         </div>
-                        <div className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-2">
+                        <div className="text-[11px] text-slate-400 mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
                           <span>
                             {coupon.validTo
                               ? `Valid until ${new Date(coupon.validTo).toLocaleDateString()}`
                               : "No expiration"}
                           </span>
-                          <span>•</span>
+                          <span className="hidden sm:inline">•</span>
                           <span>
                             {coupon.maxUses
                               ? `${coupon.usedCount || 0}/${coupon.maxUses} uses`
@@ -363,7 +365,7 @@ export const AdminSettingsPage = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 self-end sm:self-center">
+                    <div className="flex items-center gap-2 self-start sm:self-center shrink-0 flex-wrap">
                       {/* Active / Inactive Status Badge & Toggle Button */}
                       <button
                         type="button"
@@ -425,7 +427,7 @@ export const AdminSettingsPage = () => {
           <button
             type="submit"
             disabled={isSavingSettings}
-            className="px-7 py-3 bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            className="w-full sm:w-auto px-7 py-3 bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             {isSavingSettings ? "Saving Settings..." : "Save Platform Settings"}
           </button>
@@ -434,11 +436,11 @@ export const AdminSettingsPage = () => {
 
       {/* Add / Edit Coupon Modal */}
       {isCouponModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full border border-slate-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="p-6 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-md w-full border border-slate-200 shadow-2xl overflow-hidden max-h-[92dvh] flex flex-col my-auto animate-in fade-in zoom-in-95 duration-150">
+            <div className="p-4 sm:p-6 border-b border-slate-200 flex items-center justify-between bg-slate-50/50 shrink-0">
               <div>
-                <h3 className="text-base font-bold text-slate-900">
+                <h3 className="text-sm sm:text-base font-bold text-slate-900">
                   {editingCouponId ? "Edit Platform Coupon" : "Create Platform Coupon"}
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -450,14 +452,14 @@ export const AdminSettingsPage = () => {
               <button
                 type="button"
                 onClick={() => setIsCouponModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors cursor-pointer shrink-0"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleCouponFormSubmit}>
-              <div className="p-6 space-y-4 text-xs text-slate-700">
+            <form onSubmit={handleCouponFormSubmit} className="flex flex-col flex-1 min-h-0">
+              <div className="p-4 sm:p-6 space-y-4 text-xs text-slate-700 overflow-y-auto flex-1">
                 {/* Coupon Code */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-800 mb-1">
@@ -476,7 +478,7 @@ export const AdminSettingsPage = () => {
                 </div>
 
                 {/* Discount Type & Value */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-slate-800 mb-1">
                       Discount Type
@@ -512,7 +514,7 @@ export const AdminSettingsPage = () => {
                 </div>
 
                 {/* Min Order & Max Discount */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-slate-800 mb-1">
                       Min Order Amount (৳)
@@ -547,7 +549,7 @@ export const AdminSettingsPage = () => {
                 </div>
 
                 {/* Expiry Date & Max Uses */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-slate-800 mb-1">
                       Expiration Date
@@ -595,18 +597,18 @@ export const AdminSettingsPage = () => {
                 </div>
               </div>
 
-              <div className="p-6 border-t border-slate-200 bg-slate-50/50 flex items-center justify-end gap-3">
+              <div className="p-4 sm:p-6 border-t border-slate-200 bg-slate-50/50 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsCouponModalOpen(false)}
-                  className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-medium transition-colors cursor-pointer"
+                  className="w-full sm:w-auto px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-medium transition-colors cursor-pointer text-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isCreatingCoupon || isUpdatingCoupon}
-                  className="px-5 py-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white rounded-lg text-xs font-bold shadow-sm transition-all cursor-pointer disabled:opacity-50"
+                  className="w-full sm:w-auto px-5 py-2.5 bg-[#4F46E5] hover:bg-[#4338CA] text-white rounded-lg text-xs font-bold shadow-sm transition-all cursor-pointer disabled:opacity-50 text-center"
                 >
                   {isCreatingCoupon || isUpdatingCoupon
                     ? "Saving..."

@@ -37,6 +37,19 @@ const EXTENSION_MAP = {
   '.mkv': 'video/x-matroska',
   '.mov': 'video/quicktime',
   '.avi': 'video/x-msvideo',
+  '.m4v': 'video/x-m4v',
+  '.3gp': 'video/3gpp',
+  '.3g2': 'video/3gpp2',
+  '.wmv': 'video/x-ms-wmv',
+  '.flv': 'video/x-flv',
+  '.ogv': 'video/ogg',
+  '.ts': 'video/mp2t',
+  '.mts': 'video/mp2t',
+  '.m2ts': 'video/mp2t',
+  '.mpg': 'video/mpeg',
+  '.mpeg': 'video/mpeg',
+  '.vob': 'video/dvd',
+  '.asf': 'video/x-ms-asf',
 
   // Documents
   '.pdf': 'application/pdf',
@@ -74,12 +87,14 @@ const storage = multer.diskStorage({
 
     const isVideo =
       mimetype?.startsWith('video/') ||
-      ['.mp4', '.webm', '.mkv', '.mov', '.avi'].includes(ext);
+      ['.mp4', '.webm', '.mkv', '.mov', '.avi', '.m4v', '.3gp', '.wmv', '.flv', '.mpg', '.mpeg', '.ts', '.ogv'].includes(ext) ||
+      req.path?.includes('video') ||
+      req.originalUrl?.includes('video');
 
     if (isImage) {
-      if (req.baseUrl.includes('user') || req.path.includes('avatar')) {
+      if (req.baseUrl?.includes('user') || req.path?.includes('avatar')) {
         folder = 'avatars';
-      } else if (req.baseUrl.includes('product') || req.path.includes('product')) {
+      } else if (req.baseUrl?.includes('product') || req.path?.includes('product')) {
         folder = 'products';
       } else {
         folder = 'images';
@@ -89,15 +104,55 @@ const storage = multer.diskStorage({
     }
 
     const destinationPath = path.join(UPLOAD_ROOT, folder);
+    if (!fs.existsSync(destinationPath)) {
+      fs.mkdirSync(destinationPath, { recursive: true });
+    }
     cb(null, destinationPath);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const sanitizedExt = path.extname(file.originalname).toLowerCase();
-    const baseName = path
-      .basename(file.originalname, sanitizedExt)
-      .replace(/[^a-zA-Z0-9_-]/g, '_')
-      .slice(0, 50);
+    let sanitizedExt = path.extname(file.originalname || '').toLowerCase();
+
+    // Fallback extension from MIME type or route if missing (e.g. mobile recordings or blobs)
+    if (!sanitizedExt && file.mimetype) {
+      const mimeToExt = {
+        'video/mp4': '.mp4',
+        'video/webm': '.webm',
+        'video/quicktime': '.mov',
+        'video/x-matroska': '.mkv',
+        'video/x-msvideo': '.avi',
+        'video/3gpp': '.3gp',
+        'video/3gpp2': '.3g2',
+        'video/x-ms-wmv': '.wmv',
+        'video/x-flv': '.flv',
+        'video/ogg': '.ogv',
+        'video/mp2t': '.ts',
+        'video/mpeg': '.mpeg',
+        'image/jpeg': '.jpg',
+        'image/png': '.png',
+        'image/webp': '.webp',
+        'image/gif': '.gif',
+        'image/svg+xml': '.svg',
+        'application/pdf': '.pdf',
+      };
+      sanitizedExt =
+        mimeToExt[file.mimetype] ||
+        (file.mimetype.startsWith('video/')
+          ? '.mp4'
+          : req.originalUrl?.includes('video')
+          ? '.mp4'
+          : '');
+    }
+
+    if (!sanitizedExt && (req.originalUrl?.includes('video') || req.path?.includes('video'))) {
+      sanitizedExt = '.mp4';
+    }
+
+    const baseName =
+      path
+        .basename(file.originalname || 'video', sanitizedExt)
+        .replace(/[^a-zA-Z0-9_-]/g, '_')
+        .slice(0, 50) || 'media';
     cb(null, `${baseName}-${uniqueSuffix}${sanitizedExt}`);
   },
 });
@@ -108,26 +163,31 @@ const fileFilter = (req, file, cb) => {
 
   const isKnownExtension = Boolean(EXTENSION_MAP[ext]);
   const isImage = mimetype?.startsWith('image/') || isKnownExtension;
-  const isVideo = mimetype?.startsWith('video/') || isKnownExtension;
+  const isVideo =
+    mimetype?.startsWith('video/') ||
+    isKnownExtension ||
+    ['.mp4', '.webm', '.mkv', '.mov', '.avi', '.m4v', '.3gp', '.wmv', '.flv', '.mpg', '.mpeg', '.ts', '.ogv'].includes(ext);
   const isDoc = mimetype?.startsWith('application/') || isKnownExtension;
+  const isVideoEndpoint =
+    req.baseUrl?.includes('video') || req.path?.includes('video') || req.originalUrl?.includes('video');
 
-  if (isKnownExtension || isImage || isVideo || isDoc) {
+  if (isKnownExtension || isImage || isVideo || isDoc || isVideoEndpoint) {
     cb(null, true);
   } else {
     cb(
       new ApiError(
         400,
-        `Unsupported file type: "${ext || mimetype}". Allowed: Images (JPG, PNG, WEBP, GIF, SVG, AVIF), Videos (MP4, WEBM, MOV), Docs (PDF, DOCX, ZIP)`
+        `Unsupported file type: "${ext || mimetype}". Allowed: Images (JPG, PNG, WEBP, GIF, SVG, AVIF), Videos (MP4, WEBM, MOV, MKV, AVI, etc.), Docs (PDF, DOCX, ZIP)`
       ),
       false
     );
   }
 };
 
-// Size limits from environment or defaults
-const maxImageSize = (parseInt(process.env.MAX_IMAGE_SIZE_MB, 10) || 15) * 1024 * 1024;
-const maxVideoSize = (parseInt(process.env.MAX_VIDEO_SIZE_MB, 10) || 100) * 1024 * 1024;
-const maxDocSize = (parseInt(process.env.MAX_DOC_SIZE_MB, 10) || 25) * 1024 * 1024;
+// Size limits from environment or defaults (generous for modern video recordings)
+const maxImageSize = (parseInt(process.env.MAX_IMAGE_SIZE_MB, 10) || 25) * 1024 * 1024;
+const maxVideoSize = (parseInt(process.env.MAX_VIDEO_SIZE_MB, 10) || 250) * 1024 * 1024;
+const maxDocSize = (parseInt(process.env.MAX_DOC_SIZE_MB, 10) || 50) * 1024 * 1024;
 
 export const upload = multer({
   storage,
@@ -137,22 +197,18 @@ export const upload = multer({
   },
 });
 
-// Flexible single uploader supporting common field names: 'image', 'file', 'photo', 'avatar', 'video', 'media'
+// Flexible single uploader supporting any single file field
 export const uploadSingle = (primaryField = 'image') => {
-  const commonFields = Array.from(new Set([primaryField, 'image', 'file', 'photo', 'avatar', 'video', 'media']));
-  const fields = commonFields.map((name) => ({ name, maxCount: 1 }));
-  const uploader = upload.fields(fields);
+  const uploader = upload.any();
 
   return (req, res, next) => {
     uploader(req, res, (err) => {
       if (err) return next(err);
-      if (req.files) {
-        for (const field of commonFields) {
-          if (req.files[field] && req.files[field][0]) {
-            req.file = req.files[field][0];
-            break;
-          }
-        }
+      if (req.files && req.files.length > 0) {
+        req.file =
+          req.files.find((f) => f.fieldname === primaryField) ||
+          req.files.find((f) => ['video', 'file', 'image', 'photo', 'avatar', 'media'].includes(f.fieldname)) ||
+          req.files[0];
       }
       next();
     });

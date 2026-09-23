@@ -63,11 +63,35 @@ export const isOriginAllowed = (origin) => {
 
   const cleanOrigin = origin.trim().replace(/\/+$/, '').toLowerCase();
 
-  return allowedOrigins.some((allowed) => {
+  const isExplicitlyAllowed = allowedOrigins.some((allowed) => {
     if (allowed === '*') return true;
     const cleanAllowed = allowed.replace(/\/+$/, '').toLowerCase();
     return cleanAllowed === cleanOrigin;
   });
+
+  if (isExplicitlyAllowed) return true;
+
+  // In development, dynamically permit private network / LAN origins (mobile phones testing over Wi-Fi)
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      const url = new URL(origin);
+      const hostname = url.hostname;
+      if (
+        hostname === 'localhost' ||
+        hostname === '127.0.0.1' ||
+        hostname.endsWith('.local') ||
+        hostname.startsWith('192.168.') ||
+        hostname.startsWith('10.') ||
+        /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(hostname)
+      ) {
+        return true;
+      }
+    } catch {
+      // Ignore URL parsing errors
+    }
+  }
+
+  return false;
 };
 
 /**

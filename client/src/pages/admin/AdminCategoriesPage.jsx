@@ -160,20 +160,20 @@ export const AdminCategoriesPage = () => {
       )}
 
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
             Category Management
           </h1>
           <p className="text-xs text-slate-500 mt-1">
             Create, edit, organize category hierarchies, and manage product catalog taxonomy.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
           <button
             type="button"
             onClick={() => handleOpenCreateModal()}
-            className="px-5 py-2.5 bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold rounded-lg shadow-sm transition-all flex items-center gap-1.5"
+            className="w-full sm:w-auto px-4 py-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs font-bold rounded-lg shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <span>+</span>
             <span>Add New Category</span>
@@ -194,7 +194,7 @@ export const AdminCategoriesPage = () => {
           {searchInput && (
             <button
               onClick={() => setSearchInput("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs cursor-pointer"
             >
               ✕
             </button>
@@ -219,16 +219,16 @@ export const AdminCategoriesPage = () => {
         /* Populated Table Card */
         <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left text-slate-600">
+            <table className="w-full min-w-[680px] text-xs text-left text-slate-600">
               <thead className="text-[11px] font-semibold text-slate-500 bg-slate-50/80 border-b border-slate-200">
                 <tr>
-                  <th className="px-6 py-3.5">Image</th>
-                  <th className="px-6 py-3.5">Category Name</th>
-                  <th className="px-6 py-3.5">Slug</th>
-                  <th className="px-6 py-3.5">Hierarchy</th>
-                  <th className="px-6 py-3.5">Order</th>
-                  <th className="px-6 py-3.5">Status</th>
-                  <th className="px-6 py-3.5 text-right">Actions</th>
+                  <th className="px-4 sm:px-6 py-3.5">Image</th>
+                  <th className="px-4 sm:px-6 py-3.5">Category Name</th>
+                  <th className="px-4 sm:px-6 py-3.5">Slug</th>
+                  <th className="px-4 sm:px-6 py-3.5">Hierarchy</th>
+                  <th className="px-4 sm:px-6 py-3.5">Order</th>
+                  <th className="px-4 sm:px-6 py-3.5">Status</th>
+                  <th className="px-4 sm:px-6 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -355,12 +355,12 @@ export const AdminCategoriesPage = () => {
 
       {/* Create / Edit Category Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-lg w-full border border-slate-200 shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-lg w-full border border-slate-200 shadow-2xl overflow-hidden my-auto max-h-[92dvh] flex flex-col animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
-            <div className="p-6 border-b border-slate-200 flex items-center justify-between bg-slate-50/50">
-              <div>
-                <h3 className="text-base font-bold text-slate-900">
+            <div className="p-4 sm:p-6 border-b border-slate-200 flex items-center justify-between bg-slate-50/50 shrink-0">
+              <div className="min-w-0">
+                <h3 className="text-base font-bold text-slate-900 truncate">
                   {editingCategory ? "Edit Category" : "Create New Category"}
                 </h3>
                 <p className="text-xs text-slate-500">
@@ -371,15 +371,15 @@ export const AdminCategoriesPage = () => {
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors cursor-pointer shrink-0 ml-2"
               >
                 ✕
               </button>
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleSubmitForm}>
-              <div className="p-6 space-y-4 text-xs text-slate-700">
+            <form onSubmit={handleSubmitForm} className="flex flex-col flex-1 overflow-hidden">
+              <div className="p-4 sm:p-6 space-y-4 text-xs text-slate-700 overflow-y-auto flex-1">
                 {/* Category Name */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-800 mb-1">
@@ -468,18 +468,18 @@ export const AdminCategoriesPage = () => {
               </div>
 
               {/* Modal Footer */}
-              <div className="p-6 border-t border-slate-200 bg-slate-50/50 flex items-center justify-end gap-3">
+              <div className="p-4 sm:p-6 border-t border-slate-200 bg-slate-50/50 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-medium transition-colors"
+                  className="w-full sm:w-auto px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-medium transition-colors cursor-pointer text-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isCreating || isUpdating}
-                  className="px-5 py-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white rounded-lg text-xs font-bold shadow-sm transition-all"
+                  className="w-full sm:w-auto px-5 py-2 bg-[#4F46E5] hover:bg-[#4338CA] text-white rounded-lg text-xs font-bold shadow-sm transition-all cursor-pointer text-center"
                 >
                   {isCreating || isUpdating
                     ? "Saving..."
@@ -495,8 +495,8 @@ export const AdminCategoriesPage = () => {
 
       {/* Delete Confirmation Modal */}
       {categoryToDelete && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full border border-slate-200 shadow-2xl p-6 space-y-4 animate-in fade-in zoom-in-95">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full border border-slate-200 shadow-2xl p-4 sm:p-6 space-y-4 animate-in fade-in zoom-in-95">
             <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xl mx-auto">
               🗑️
             </div>
@@ -506,11 +506,11 @@ export const AdminCategoriesPage = () => {
                 Are you sure you want to delete <strong className="text-slate-800">{categoryToDelete.name}</strong>? Any nested subcategories will also be deleted.
               </p>
             </div>
-            <div className="flex gap-3 justify-end pt-2">
+            <div className="flex flex-col-reverse sm:flex-row gap-2 justify-end pt-2">
               <button
                 type="button"
                 onClick={() => setCategoryToDelete(null)}
-                className="px-4 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium"
+                className="w-full sm:w-auto px-4 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium cursor-pointer text-center"
               >
                 Cancel
               </button>
@@ -518,7 +518,7 @@ export const AdminCategoriesPage = () => {
                 type="button"
                 disabled={isDeleting}
                 onClick={handleConfirmDelete}
-                className="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition-colors"
+                className="w-full sm:w-auto px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer text-center"
               >
                 {isDeleting ? "Deleting..." : "Confirm Delete"}
               </button>
