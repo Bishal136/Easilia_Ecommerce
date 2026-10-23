@@ -10,8 +10,21 @@ import fs from 'fs';
 export const getFileInfo = (req, file) => {
   if (!file) return null;
 
-  const serverUrl =
-    process.env.SERVER_URL || `${req.protocol}://${req.get('host')}`;
+  // Dynamically resolve serverUrl: adapt to host header if accessed via IP/localhost or SERVER_URL unset
+  let serverUrl = process.env.SERVER_URL?.trim()?.replace(/\/+$/, '') || '';
+  if (
+    !serverUrl ||
+    (req &&
+      (req.get('host')?.includes('192.168.') ||
+        req.get('host')?.includes('localhost') ||
+        req.get('host')?.includes('127.0.0.1') ||
+        req.get('host')?.includes('10.') ||
+        /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(req.get('host') || '')))
+  ) {
+    if (req) {
+      serverUrl = `${req.protocol}://${req.get('host')}`;
+    }
+  }
 
   // Extract relative path from upload root
   const uploadRoot = path.resolve(process.env.UPLOAD_DIR || 'uploads');

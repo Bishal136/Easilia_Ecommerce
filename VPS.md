@@ -52,25 +52,92 @@ nano .env.production
 ৫.২ প্রোডাকশন বান্ডেল তৈরি ও পারমিশনBashnpm run build
 sudo chmod -R 755 /var/www/Easilia_Ecommerce/client
 যাচাই: নিশ্চিত করুন /var/www/Easilia_Ecommerce/client/dist ফোল্ডারের ভেতরে index.html ও assets তৈরি হয়েছে।৬. Nginx রিভার্স প্রক্সি কনফিগারেশনFrontend এবং Backend ডোমেনের জন্য ভার্চুয়াল হোস্ট কনফিগার করুন:Bashsudo nano /etc/nginx/sites-available/Easilia_Ecommerce
-নিচের সম্পূর্ণ কনফিগারেশনটি পেস্ট করুন:Nginx# ১. Frontend Domain (easilia.com & www.easilia.com)
+নিচের সম্পূর্ণ কনফিগারেশনটি পেস্ট করুন:Nginx# WebSocket connection upgrade mapping
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    "" close;
+}
+
+# ১. Frontend SPA (easilia.com, www.easilia.com, VPS_IP, localhost)
 server {
     listen 80;
-    server_name easilia.com www.easilia.com;
+    server_name easilia.com www.easilia.com localhost 127.0.0.1;
 
     root /var/www/Easilia_Ecommerce/client/dist;
     index index.html;
 
-    client_max_body_size 20M;
+    client_max_body_size 300M;
+    client_body_buffer_size 16M;
+    client_body_timeout 3600s;
+    client_header_timeout 3600s;
 
+    # Security & OAuth popup headers
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Cross-Origin-Opener-Policy "same-origin-allow-popups" always;
+    add_header Cross-Origin-Resource-Policy "cross-origin" always;
+
+    # React client-side routing fallback
     location / {
-        # SPA রিফ্রেশ সমস্যা প্রতিরোধে
         try_files $uri $uri/ /index.html;
     }
 
-    # স্ট্যাটিক অ্যাসেট ক্যাশিং
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
+    # Static uploads directory - served directly from disk with priority
+    location ^~ /uploads/ {
+        root /var/www/Easilia_Ecommerce/server;
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+        add_header Cross-Origin-Resource-Policy "cross-origin" always;
+        try_files $uri =404;
+    }
+
+    # API Reverse Proxy (points to Node.js backend on port 5010)
+    location ^~ /api/ {
+        proxy_pass http://127.0.0.1:5010;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Upload & long-request timeouts
+        proxy_connect_timeout 3600s;
+        proxy_send_timeout 3600s;
+        proxy_read_timeout 3600s;
+        send_timeout 3600s;
+
+        # Buffering for large uploads
+        proxy_request_buffering on;
+        proxy_buffering on;
+        proxy_buffers 8 16k;
+        proxy_buffer_size 16k;
+    }
+
+    # Socket.IO Real-time WebSockets
+    location ^~ /socket.io/ {
+        proxy_pass http://127.0.0.1:5010;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_connect_timeout 3600s;
+        proxy_send_timeout 3600s;
+        proxy_read_timeout 3600s;
+    }
+
+    # Frontend static assets caching (CSS, JS, fonts, dist icons)
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|webp|ttf|eot)$ {
         expires 1y;
         add_header Cache-Control "public, no-transform";
+        add_header Cross-Origin-Resource-Policy "cross-origin" always;
+        try_files $uri =404;
     }
 }
 
@@ -79,17 +146,41 @@ server {
     listen 80;
     server_name api.easilia.com;
 
-    client_max_body_size 20M;
+    client_max_body_size 300M;
+    client_body_buffer_size 16M;
+    client_body_timeout 3600s;
+    client_header_timeout 3600s;
+
+    # Static uploads directory for direct media access from api domain
+    location ^~ /uploads/ {
+        root /var/www/Easilia_Ecommerce/server;
+        expires 30d;
+        add_header Cache-Control "public, no-transform";
+        add_header Cross-Origin-Resource-Policy "cross-origin" always;
+        try_files $uri =404;
+    }
 
     location / {
-        proxy_pass http://127.0.0.1:5000;
+        proxy_pass http://127.0.0.1:5010;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
+        proxy_set_header Connection $connection_upgrade;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Timeouts for large uploads
+        proxy_connect_timeout 3600s;
+        proxy_send_timeout 3600s;
+        proxy_read_timeout 3600s;
+        send_timeout 3600s;
+
+        # Buffering
+        proxy_request_buffering on;
+        proxy_buffering on;
+        proxy_buffers 8 16k;
+        proxy_buffer_size 16k;
     }
 }
 কনফিগ সক্রিয় করে Nginx রিস্টার্ট দিন:Bashsudo ln -sf /etc/nginx/sites-available/Easilia_Ecommerce /etc/nginx/sites-enabled/

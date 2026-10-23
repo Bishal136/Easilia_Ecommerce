@@ -1,0 +1,72 @@
+services:
+  # ----------------------------------------------------------------------------
+  # 1. Backend API Service (Node.js / Express on Arch Linux)
+  # ----------------------------------------------------------------------------
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: easilia-server
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - UPLOAD_DIR=uploads
+      # Default connects to the local mongo container; can override with MongoDB Atlas URI
+      - MONGO_URI=${MONGO_URI:-mongodb://mongo:27017/easilia}
+      - CLIENT_URL=${CLIENT_URL:-http://localhost,http://localhost:80}
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost,http://localhost:80}
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET:-d30db6a75f6ff3d367530012ef1270910075449cb4925f8c15cd584b261fc721}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-d30db6a75f6ff3d367530012ef1270910075449cb4925f8c15cd584b25s46txhxfy5}
+      - JWT_ACCESS_EXPIRY=7d
+      - JWT_REFRESH_EXPIRY=15m
+    volumes:
+      - easilia_uploads:/app/uploads
+    networks:
+      - easilia-network
+    depends_on:
+      mongo:
+        condition: service_started
+        required: false
+
+  # ----------------------------------------------------------------------------
+  # 2. Frontend & Reverse Proxy Service (React + Nginx on Arch Linux)
+  # ----------------------------------------------------------------------------
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: easilia-client
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - easilia-network
+    depends_on:
+      - server
+
+  # ----------------------------------------------------------------------------
+  # 3. Local MongoDB Service (Optional: for standalone 100% offline development)
+  # ----------------------------------------------------------------------------
+  mongo:
+    image: mongo:7.0
+    container_name: easilia-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - easilia_mongo_data:/data/db
+    networks:
+      - easilia-network
+
+networks:
+  easilia-network:
+    driver: bridge
+
+volumes:
+  easilia_uploads:
+    driver: local
+  easilia_mongo_data:
+    driver: local

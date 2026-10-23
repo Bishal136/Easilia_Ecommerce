@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+.env
+.env.production
+.env.local
+.env.*.local
+uploads/*
+!uploads/.gitkeep
+test
+NerobEcommerce

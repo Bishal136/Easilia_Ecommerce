@@ -34,16 +34,16 @@ export const getApiBaseUrl = () => {
     return clean;
   }
 
-  // Fallback: if on mobile/LAN device, connect to backend on host machine
-  if (isBrowser && currentHostname !== "localhost" && currentHostname !== "127.0.0.1") {
-    return `http://${currentHostname}:5000/api/v1`;
+  // Fallback: in browser, relative '/api/v1' works seamlessly with Nginx reverse proxy
+  if (isBrowser) {
+    return "/api/v1";
   }
 
-  return "http://localhost:5000/api/v1";
+  return "http://localhost:5010/api/v1";
 };
 
 /**
- * Get the backend server root URL (e.g. 'http://localhost:5000')
+ * Get the backend server root URL (e.g. 'http://localhost:5010' or window.location.origin)
  * @returns {string}
  */
 export const getServerBaseUrl = () => {
@@ -51,7 +51,7 @@ export const getServerBaseUrl = () => {
   const currentHostname = isBrowser ? window.location.hostname : "localhost";
 
   const envServer = import.meta.env.VITE_SERVER_URL;
-  if (envServer && typeof envServer === "string") {
+  if (envServer && typeof envServer === "string" && envServer.trim()) {
     let clean = envServer.trim().replace(/\/+$/, "");
     if (
       isBrowser &&
@@ -82,11 +82,11 @@ export const getServerBaseUrl = () => {
     if (stripped) return stripped;
   }
 
-  if (isBrowser && currentHostname !== "localhost" && currentHostname !== "127.0.0.1") {
-    return `http://${currentHostname}:5000`;
+  if (isBrowser) {
+    return window.location.origin;
   }
 
-  return "http://localhost:5000";
+  return "http://localhost:5010";
 };
 
 /**
@@ -98,7 +98,7 @@ export const getSocketUrl = () => {
   const currentHostname = isBrowser ? window.location.hostname : "localhost";
 
   const envSocket = import.meta.env.VITE_SOCKET_URL;
-  if (envSocket && typeof envSocket === "string") {
+  if (envSocket && typeof envSocket === "string" && envSocket.trim()) {
     let clean = envSocket.trim().replace(/\/+$/, "");
     if (
       isBrowser &&
